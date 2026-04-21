@@ -2,7 +2,7 @@
  * Nome do arquivo: Exercicio001.c
  * Autor: Guilherme G. Santos
  * Propósito: Calcular a soma e a multiplicação de duas frações.
- * Data: 2026-03-29
+ * Data: 2026-04-21
  */
 
 #include <stdio.h>
@@ -47,10 +47,10 @@ int main() {
         if (scanf("%d %d", &f2.numerador, &f2.denominador) == 2) {
             
             res = soma(f1, f2);
-            printf("%d/%d\n", res.numerador, res.denominador);
+            printf("%d %d\n", res.numerador, res.denominador);
 
             res = multiplica(f1, f2);
-            printf("%d/%d\n", res.numerador, res.denominador);
+            printf("%d %d\n", res.numerador, res.denominador);
         }
     }
     return 0;

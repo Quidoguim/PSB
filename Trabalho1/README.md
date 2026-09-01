@@ -28,9 +28,11 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 | Escolha de grupos e programas | 08/09 |
 | Entrega | 22/09 |
 
-**Programa/utilitário escolhido:** [`uniq.c`](https://github.com/coreutils/coreutils/blob/master/src/uniq.c) (GNU Coreutils) — a reservar formalmente no Moodle em 08/09.
+**Programa/utilitário escolhido:** [`seq.c`](https://github.com/coreutils/coreutils/blob/master/src/seq.c) (GNU Coreutils) — a reservar formalmente no Moodle em 08/09.
 
-Motivo da escolha: `uniq.c` já tem 680 linhas (acima do mínimo de 600, sem precisar complementar), implementa um algoritmo simples e bem conhecido (remoção de linhas duplicadas adjacentes), e foi escrito por Richard M. Stallman e David MacKenzie — o que dá bastante material para o critério de "Histórico dos autores". Os utilitários `cat`, `wc` e `head` já foram reservados por outras duplas.
+Motivo da escolha: `seq.c` tem 704 linhas (acima do mínimo de 600, sem precisar complementar), implementa um algoritmo simples de entender (imprime uma sequência numérica de PRIMEIRO a ÚLTIMO em passos de INCREMENTO), mas ainda assim rico em "truques de programador C" — por exemplo, evita o acúmulo de erro de ponto flutuante calculando cada termo por multiplicação em vez de somas sucessivas. Foi escrito por Ulrich Drepper, mantenedor histórico da glibc, o que também dá bom material para o critério de "Histórico dos autores".
+
+`cat`, `wc` e `head` já haviam sido reservados por outras duplas, e `uniq.c` (nossa primeira escolha) também foi reservado por outro grupo enquanto avaliávamos as opções.
 
 ## Entrega
 

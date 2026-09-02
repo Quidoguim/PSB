@@ -28,11 +28,11 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 | Escolha de grupos e programas | 08/09 |
 | Entrega | 22/09 |
 
-**Programa/utilitário escolhido:** [`seq.c`](https://github.com/coreutils/coreutils/blob/master/src/seq.c) (GNU Coreutils) — a reservar formalmente no Moodle em 08/09.
+**Programa/utilitário escolhido:** [`sort.c`](https://github.com/coreutils/coreutils/blob/master/src/sort.c) (GNU Coreutils) — a reservar formalmente no Moodle em 08/09.
 
-Motivo da escolha: `seq.c` tem 704 linhas (acima do mínimo de 600, sem precisar complementar), implementa um algoritmo simples de entender (imprime uma sequência numérica de PRIMEIRO a ÚLTIMO em passos de INCREMENTO), mas ainda assim rico em "truques de programador C" — por exemplo, evita o acúmulo de erro de ponto flutuante calculando cada termo por multiplicação em vez de somas sucessivas. Foi escrito por Ulrich Drepper, mantenedor histórico da glibc, o que também dá bom material para o critério de "Histórico dos autores".
+`sort.c` foi escrito originalmente por Mike Haertel (dezembro de 1988) e é mantido hoje por Paul Eggert — ambos com bastante material disponível para o critério de "Histórico dos autores" (Eggert também é conhecido pela manutenção do banco de dados de fusos horários, o tz database). É um dos utilitários mais extensos do GNU Coreutils (mais de 5000 linhas), o que dá bastante espaço para os critérios de "Análise de blocos" e "Truques" (implementa merge sort externo, comparação por múltiplas chaves, otimizações de I/O e paralelismo) — vale a pena focar a apresentação em um subconjunto bem escolhido de funções, já que cobrir o arquivo inteiro em 10 minutos de vídeo não é viável.
 
-`cat`, `wc` e `head` já haviam sido reservados por outras duplas, e `uniq.c` (nossa primeira escolha) também foi reservado por outro grupo enquanto avaliávamos as opções.
+`cat`, `wc`, `head` e `uniq.c` já haviam sido reservados por outras duplas.
 
 ## Entrega
 

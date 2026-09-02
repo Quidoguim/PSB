@@ -58,7 +58,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 
 ## Documento original
 
-O enunciado completo está disponível em [`T1-PSB.pdf`](./T1-PSB.pdf).
+O enunciado completo está disponível em [`T1-PSB.pdf`](./Trabalho1/T1-PSB.pdf).
 
 ## Referências
 

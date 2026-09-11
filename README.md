@@ -34,6 +34,39 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 
 `cat`, `wc`, `head` e `uniq.c` já haviam sido reservados por outras duplas.
 
+## Progresso
+
+- [x] Dupla formada, tema escolhido: `sort.c`
+- [ ] Reserva formal confirmada no Moodle (prazo era 08/09)
+- [x] Código-fonte baixado e versionado — [Trabalho1/sort.c](./Trabalho1/sort.c), commit de referência [`bff0e54`](https://github.com/coreutils/coreutils/commit/bff0e54) do GNU Coreutils (branch `master`, 06/09/2026)
+- [x] Subconjunto de funções definido para o relatório/apresentação (ver abaixo)
+- [ ] Histórico dos autores (Mike Haertel, Paul Eggert) levantado
+- [ ] Convenções de codificação identificadas
+- [ ] Aritmética de ponteiros mapeada no subconjunto
+- [ ] Blocos de responsabilidade e dependências divididos
+- [ ] Diagramas estático e dinâmico
+- [ ] Referência acadêmica levantada
+- [ ] Exemplo de uso com depurador (stack/heap)
+- [ ] Makefile / testes automatizados
+- [ ] Relatório escrito
+- [ ] Vídeo gravado e publicado (prazo 22/09)
+
+### Subconjunto de código selecionado
+
+~740 linhas de `sort.c`, cobrindo um fluxo único (buffer → extração de chave → comparação → dispatch). Fora do escopo: `main()` (558 linhas) e a maquinaria de threads/merge.
+
+| Função | Linhas | Motivo |
+|---|---|---|
+| `try_growbuf`/`maybe_growbuf` | 1802-1861 | truque: buffer dobra de tamanho (realloc amortizado) |
+| `begfield` | 1862-1908 | aritmética de ponteiros — início do campo |
+| `limfield` | 1909-2018 | aritmética de ponteiros — fim do campo, contador regressivo |
+| `fillbuf` | 2019-2169 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
+| `keycompare` | 2946-3140 | núcleo: comparação multi-chave |
+| `compare` | 3141-3187 | desempate por linha inteira |
+| `sort()` | 4315-4444 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` |
+
+Detalhes e raciocínio completo: [CLAUDE.md](./CLAUDE.md#código-fonte).
+
 ## Entrega
 
 - Vídeo de **até 10 minutos**, apresentando os critérios de avaliação abaixo.

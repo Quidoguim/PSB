@@ -35,6 +35,16 @@ Subconjunto escolhido para o relatório/apresentação (~740 linhas, fio narrati
 
 O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do subconjunto) e `sort.c:4418` (dentro de `sort()`, no subconjunto — cobre o critério "desvio incondicional" sem precisar entrar em `main()`).
 
+### Histórico dos autores
+
+**Mike Haertel** — graduado pelo St. Olaf College (Minnesota). No verão de 1988, depois de descobrir Emacs e GCC, escreveu para Richard Stallman e foi contratado pela FSF junto com o colega de faculdade Pete TerMaat ([GNU's Bulletin vol. 1 no. 5](https://www.gnu.org/bulletins/bull5.html#SEC7), fonte primária). Seu primeiro projeto na FSF foi um novo `egrep` usando algoritmos próprios — origem do GNU grep, conhecido pela velocidade (matchers DFA/KWset). Na mesma época escreveu GNU diff e GNU sort (dezembro de 1988, data que bate com o cabeçalho do nosso `Trabalho1/sort.c`). Depois migrou para arquitetura de CPU: trabalhou na Intel no projeto do Pentium 4 e depois na AMD, hoje de volta à Intel como CPU architect ([entrevista GNU-Friends via Linux.com](https://www.linux.com/news/gnu-friends-interviews-mike-haertel/)).
+
+> Nota: um blog atribui a Haertel a co-arquitetura do AMD-V (virtualização da AMD), mas não achamos fonte primária confiável pra isso — não citar no relatório sem confirmar.
+
+**Paul Eggert** — nascido em 04/12/1954. Graduação na Rice University, PhD em Ciência da Computação pela UCLA em 1980 ([página oficial UCLA Samueli](https://samueli.ucla.edu/people/paul-eggert/)). Passou por UC Santa Barbara, Silogic, Unisys, foi CTO da Twin Sun Inc. (serviços técnicos em GNU/Linux/BSD para o mercado japonês) e hoje é Teaching Professor no Departamento de Ciência da Computação da UCLA. Mantém o [tz database](https://en.wikipedia.org/wiki/Tz_database) (IANA) desde 2005 — criou a convenção de nomes tipo `America/New_York` — e contribui com Autoconf, Diffutils, GNU RCS, gzip, Bison, Emacs, GCC, glibc, GNU tar e GNU Coreutils (co-autor/mantenedor de `sort.c` ao lado de Haertel). Recebeu o [FSF Award for the Advancement of Free Software (2021)](https://www.cs.ucla.edu/professor-paul-eggert-awarded-fsf-free-software-awards/) e é conhecido na mídia como "Time Zone King" pelo trabalho voluntário no tz database.
+
+Instituição/projeto em comum: ambos ligados ao **GNU Project / Free Software Foundation**; o código estudado vive hoje no guarda-chuva do **GNU Coreutils**.
+
 ### Evaluation criteria (9 points total)
 
 | Criterion | Points |
@@ -57,7 +67,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 
 1. Confirmar a reserva de `sort.c` no Moodle (prazo 08/09).
 2. ~~Baixar o código-fonte de `sort.c` e guardar uma cópia no repositório, com a data/commit de referência anotada~~ — feito, ver [Código-fonte](#código-fonte) acima.
-3. Levantar o histórico dos autores: Mike Haertel (autor original, 1988) e Paul Eggert (mantenedor atual, também conhecido pelo tz database) — carreira, publicações, contribuições em outros projetos.
+3. ~~Levantar o histórico dos autores~~ — feito, ver [Histórico dos autores](#histórico-dos-autores) acima.
 4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.
 5. Identificar convenções de codificação do projeto (alinhamento, margem, padrão de identificadores GNU).
 6. Mapear ocorrências de aritmética de ponteiros no subconjunto escolhido.

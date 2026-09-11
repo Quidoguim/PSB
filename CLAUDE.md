@@ -17,6 +17,24 @@ Study, understand, and present a GNU utility and/or C standard library (GLIBC) f
 - Full assignment text: [Trabalho1/T1-PSB.pdf](Trabalho1/T1-PSB.pdf); summary in [README.md](README.md).
 - Worked example of the expected report format (professor's model, analysis of `echo.c` by Marco Mangan): [Trabalho1/Modelo-Relatorio-T1-PSB.pdf](Trabalho1/Modelo-Relatorio-T1-PSB.pdf).
 
+### Código-fonte
+
+[Trabalho1/sort.c](Trabalho1/sort.c) — 5154 linhas, baixado do GNU Coreutils na branch `master`, referência commit [`bff0e54`](https://github.com/coreutils/coreutils/commit/bff0e54) ("build: sort: explicitly tag libcrypto dependency", 06/09/2026).
+
+Subconjunto escolhido para o relatório/apresentação (~740 linhas, fio narrativo único: buffer → extração de chave → comparação → dispatch; deixa de fora `main()`, 558 linhas, e a maquinaria de threads/merge, complexas demais pra um vídeo de 10 min):
+
+| Função | Linhas | Motivo |
+|---|---|---|
+| `try_growbuf`/`maybe_growbuf` | 1802-1861 | truque: buffer dobra de tamanho (realloc amortizado) |
+| `begfield` | 1862-1908 | aritmética de ponteiros — início do campo |
+| `limfield` | 1909-2018 | aritmética de ponteiros — fim do campo, contador regressivo |
+| `fillbuf` | 2019-2169 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
+| `keycompare` | 2946-3140 | núcleo: comparação multi-chave, bloco denso |
+| `compare` | 3141-3187 | desempate por linha inteira |
+| `sort()` | 4315-4444 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` (`sort.c:4418`, label `finish`) |
+
+O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do subconjunto) e `sort.c:4418` (dentro de `sort()`, no subconjunto — cobre o critério "desvio incondicional" sem precisar entrar em `main()`).
+
 ### Evaluation criteria (9 points total)
 
 | Criterion | Points |
@@ -38,9 +56,9 @@ Constraint: **C only** — no C++, C#, Objective-C, or similar. `echo` cannot be
 O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esperado: Introdução, Idiomas identificados, Divisão em blocos, Dependências (tabela), Cenário principal com diagrama estático de arquivo/funções e diagrama dinâmico de fluxo, Conclusão, Referências, e anexo com o código-fonte completo. Usar essa estrutura como guia para o relatório de `sort.c`.
 
 1. Confirmar a reserva de `sort.c` no Moodle (prazo 08/09).
-2. Baixar o código-fonte de `sort.c` na versão atual do [GNU Coreutils](https://github.com/coreutils/coreutils/blob/master/src/sort.c) e guardar uma cópia no repositório (com a data/commit de referência anotada, já que o arquivo evolui).
+2. ~~Baixar o código-fonte de `sort.c` e guardar uma cópia no repositório, com a data/commit de referência anotada~~ — feito, ver [Código-fonte](#código-fonte) acima.
 3. Levantar o histórico dos autores: Mike Haertel (autor original, 1988) e Paul Eggert (mantenedor atual, também conhecido pelo tz database) — carreira, publicações, contribuições em outros projetos.
-4. Ler `sort.c` por completo uma vez e escolher o subconjunto de funções a apresentar (mínimo 600 linhas do texto original), priorizando trechos ricos em idiomas de C e truques de otimização.
+4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.
 5. Identificar convenções de codificação do projeto (alinhamento, margem, padrão de identificadores GNU).
 6. Mapear ocorrências de aritmética de ponteiros no subconjunto escolhido.
 7. Levantar os "truques de programador C" (idiomas que reduzem instruções/memória/ciclos) presentes no trecho.

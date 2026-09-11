@@ -45,6 +45,18 @@ O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do 
 
 Instituição/projeto em comum: ambos ligados ao **GNU Project / Free Software Foundation**; o código estudado vive hoje no guarda-chuva do **GNU Coreutils**.
 
+### Convenções de codificação
+
+Levantadas a partir do subconjunto escolhido (linhas 1802-4444):
+
+- **Indentação:** 2 espaços por nível, sem tabs no código. Tabs aparecem só pra alinhar o `\` de continuação em macros multi-linha (ex. `CMP_WITH_IGNORE`, `sort.c:3052-3061`, dentro de `keycompare`).
+- **Chaves (estilo GNU):** chave de abertura de bloco fica em linha própria, indentada 2 espaços a mais que o comando que a abre; o conteúdo do bloco, mais 2 espaços. Em funções, a chave abre na coluna 0 (ex. `try_growbuf`, `sort.c:1803-1804`). Diferente do K&R, que colaria a chave na mesma linha do `if`/`for`/assinatura.
+- **Margem:** linhas ficam em torno de 80 colunas no subconjunto (padrão histórico GNU de 79 colunas).
+- **Espaço antes de parênteses:** GNU sempre separa o nome da função do `(` com um espaço, em chamada e declaração — `malloc (alloc)`, `memcpy (newbuf, oldbuf, buf->used)` (`sort.c:1808,1816`). Contraste útil pro vídeo: convenções tipo Linux kernel/K&R não usam esse espaço em chamadas.
+- **Ponteiros:** `*` colado ao identificador, não ao tipo — `char *ptr`, `struct line *line` (`sort.c:1865`).
+- **Identificadores:** `snake_case` para funções e variáveis (`try_growbuf`, `begfield`, `new_linelim`); `MAIÚSCULO` para macros/atributos (`ATTRIBUTE_PURE`, `TAB_DEFAULT`); `struct nome` sempre minúsculo.
+- **Comentários:** bloco `/* ... */` antes da função descrevendo o que ela faz; nomes de parâmetros citados em MAIÚSCULO dentro do texto — ex. "Try to grow BUF according to POLICY" antes de `maybe_growbuf` (`sort.c:1838`).
+
 ### Evaluation criteria (9 points total)
 
 | Criterion | Points |
@@ -69,7 +81,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 2. ~~Baixar o código-fonte de `sort.c` e guardar uma cópia no repositório, com a data/commit de referência anotada~~ — feito, ver [Código-fonte](#código-fonte) acima.
 3. ~~Levantar o histórico dos autores~~ — feito, ver [Histórico dos autores](#histórico-dos-autores) acima.
 4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.
-5. Identificar convenções de codificação do projeto (alinhamento, margem, padrão de identificadores GNU).
+5. ~~Identificar convenções de codificação do projeto~~ — feito, ver [Convenções de codificação](#convenções-de-codificação) acima.
 6. Mapear ocorrências de aritmética de ponteiros no subconjunto escolhido.
 7. Levantar os "truques de programador C" (idiomas que reduzem instruções/memória/ciclos) presentes no trecho.
 8. Dividir o subconjunto escolhido em blocos de responsabilidade e funções auxiliares, com tabela de dependências internas/externas (como a Tabela 1/2 do modelo).

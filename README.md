@@ -41,7 +41,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Código-fonte baixado e versionado — [Trabalho1/sort.c](./Trabalho1/sort.c), commit de referência [`bff0e54`](https://github.com/coreutils/coreutils/commit/bff0e54) do GNU Coreutils (branch `master`, 06/09/2026)
 - [x] Subconjunto de funções definido para o relatório/apresentação (ver abaixo)
 - [x] Histórico dos autores (Mike Haertel, Paul Eggert) levantado
-- [ ] Convenções de codificação identificadas
+- [x] Convenções de codificação identificadas
 - [ ] Aritmética de ponteiros mapeada no subconjunto
 - [ ] Blocos de responsabilidade e dependências divididos
 - [ ] Diagramas estático e dinâmico
@@ -72,6 +72,12 @@ Detalhes e raciocínio completo: [CLAUDE.md](./CLAUDE.md#código-fonte).
 **Mike Haertel** (St. Olaf College) escreveu o GNU grep, GNU diff e GNU sort na FSF em 1988, depois seguiu carreira em arquitetura de CPU (Intel — Pentium 4 —, depois AMD, hoje Intel de novo). **Paul Eggert** (PhD UCLA 1980) é o mantenedor atual de `sort.c`, mantém o tz database da IANA desde 2005 e contribui com Autoconf, Diffutils, RCS, gzip, GCC, glibc e GNU Coreutils; recebeu o FSF Award for the Advancement of Free Software em 2021.
 
 Fontes e detalhes completos: [CLAUDE.md](./CLAUDE.md#histórico-dos-autores).
+
+### Convenções de codificação
+
+Estilo GNU clássico no subconjunto escolhido: 2 espaços de indentação (sem tabs no código), chave de bloco em linha própria, espaço entre nome de função e `(` (`malloc (alloc)`), `*` de ponteiro colado à variável (`char *ptr`), identificadores em `snake_case` e macros em MAIÚSCULO, margem em torno de 80 colunas.
+
+Detalhes e exemplos com número de linha: [CLAUDE.md](./CLAUDE.md#convenções-de-codificação).
 
 ## Entrega
 

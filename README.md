@@ -28,7 +28,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 | Escolha de grupos e programas | 08/09 |
 | Entrega | 22/09 |
 
-**Programa/utilitário escolhido:** [`sort.c`](https://github.com/coreutils/coreutils/blob/master/src/sort.c) (GNU Coreutils) — a reservar formalmente no Moodle em 08/09.
+**Programa/utilitário escolhido:** [`sort.c`](https://github.com/coreutils/coreutils/blob/master/src/sort.c) (GNU Coreutils) — reserva formal feita no Moodle dentro do prazo (08/09).
 
 `sort.c` foi escrito originalmente por Mike Haertel (dezembro de 1988) e é mantido hoje por Paul Eggert — ambos com bastante material disponível para o critério de "Histórico dos autores" (Eggert também é conhecido pela manutenção do banco de dados de fusos horários, o tz database). É um dos utilitários mais extensos do GNU Coreutils (mais de 5000 linhas), o que dá bastante espaço para os critérios de "Análise de blocos" e "Truques" (implementa merge sort externo, comparação por múltiplas chaves, otimizações de I/O e paralelismo) — vale a pena focar a apresentação em um subconjunto bem escolhido de funções, já que cobrir o arquivo inteiro em 10 minutos de vídeo não é viável.
 
@@ -37,7 +37,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 ## Progresso
 
 - [x] Dupla formada, tema escolhido: `sort.c`
-- [ ] Reserva formal confirmada no Moodle (prazo era 08/09)
+- [x] Reserva formal confirmada no Moodle (feita dentro do prazo, 08/09)
 - [x] Código-fonte baixado e versionado — [Trabalho1/sort.c](./Trabalho1/sort.c), commit de referência [`bff0e54`](https://github.com/coreutils/coreutils/commit/bff0e54) do GNU Coreutils (branch `master`, 06/09/2026)
 - [x] Subconjunto de funções definido para o relatório/apresentação (ver abaixo)
 - [x] Histórico dos autores (Mike Haertel, Paul Eggert) levantado

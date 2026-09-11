@@ -77,7 +77,7 @@ Constraint: **C only** — no C++, C#, Objective-C, or similar. `echo` cannot be
 
 O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esperado: Introdução, Idiomas identificados, Divisão em blocos, Dependências (tabela), Cenário principal com diagrama estático de arquivo/funções e diagrama dinâmico de fluxo, Conclusão, Referências, e anexo com o código-fonte completo. Usar essa estrutura como guia para o relatório de `sort.c`.
 
-1. Confirmar a reserva de `sort.c` no Moodle (prazo 08/09).
+1. ~~Confirmar a reserva de `sort.c` no Moodle~~ — feito, reserva formal concluída dentro do prazo (08/09).
 2. ~~Baixar o código-fonte de `sort.c` e guardar uma cópia no repositório, com a data/commit de referência anotada~~ — feito, ver [Código-fonte](#código-fonte) acima.
 3. ~~Levantar o histórico dos autores~~ — feito, ver [Histórico dos autores](#histórico-dos-autores) acima.
 4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.

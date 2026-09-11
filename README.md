@@ -69,13 +69,15 @@ Detalhes e raciocínio completo: [CLAUDE.md](./CLAUDE.md#código-fonte).
 
 ### Histórico dos autores
 
-**Mike Haertel** (St. Olaf College) escreveu o GNU grep, GNU diff e GNU sort na FSF em 1988, depois seguiu carreira em arquitetura de CPU (Intel — Pentium 4 —, depois AMD, hoje Intel de novo). **Paul Eggert** (PhD UCLA 1980) é o mantenedor atual de `sort.c`, mantém o tz database da IANA desde 2005 e contribui com Autoconf, Diffutils, RCS, gzip, GCC, glibc e GNU Coreutils; recebeu o FSF Award for the Advancement of Free Software em 2021.
+**Mike Haertel** (St. Olaf College) foi contratado pela FSF em 1988 e escreveu o GNU grep, GNU diff e GNU sort. Em 2010 publicou uma explicação hoje clássica de por que o grep é rápido ("the key to making programs fast is to make them do practically nothing") — a mesma filosofia aparece nos truques de buffer/ponteiro do nosso subconjunto de `sort.c`. Depois seguiu carreira em arquitetura de CPU (Intel — Pentium 4 —, depois AMD, hoje Intel de novo).
+
+**Paul Eggert** (Rice University, PhD UCLA 1980) é o mantenedor atual de `sort.c`. Publicou em USENIX (1993), *Computing in Science & Engineering* (2000) e *Software: Practice and Experience* (2005), e é coautor das RFCs 8536/9636/6557 sobre o formato do tz database, que mantém na IANA desde 2005. Contribui também com Autoconf, Diffutils, RCS, gzip, GCC, glibc e GNU Coreutils; recebeu o FSF Award for the Advancement of Free Software em 2021.
 
 Fontes e detalhes completos: [CLAUDE.md](./CLAUDE.md#histórico-dos-autores).
 
 ### Convenções de codificação
 
-Estilo GNU clássico no subconjunto escolhido: 2 espaços de indentação (sem tabs no código), chave de bloco em linha própria, espaço entre nome de função e `(` (`malloc (alloc)`), `*` de ponteiro colado à variável (`char *ptr`), identificadores em `snake_case` e macros em MAIÚSCULO, margem em torno de 80 colunas.
+Confrontamos o subconjunto direto com o [GNU Coding Standards](https://www.gnu.org/prep/standards/html_node/Formatting.html) oficial: a regra "open-brace ... in column one" bate com `try_growbuf`/`begfield`/`sort()`, "spaces before the open-parentheses" bate com `malloc (alloc)`, "split it before an operator, not after one" bate com o ternário de `keycompare` (`sort.c:3007-3009`), e o template `do {...} while (cond)` aparece igual em `sort.c:3090-3098`. Também: 2 espaços de indentação (sem tabs no código), `*` de ponteiro colado à variável (`char *ptr`), identificadores em `snake_case` e macros em MAIÚSCULO, margem em torno de 80 colunas.
 
 Detalhes e exemplos com número de linha: [CLAUDE.md](./CLAUDE.md#convenções-de-codificação).
 

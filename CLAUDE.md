@@ -37,22 +37,42 @@ O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do 
 
 ### Histórico dos autores
 
-**Mike Haertel** — graduado pelo St. Olaf College (Minnesota). No verão de 1988, depois de descobrir Emacs e GCC, escreveu para Richard Stallman e foi contratado pela FSF junto com o colega de faculdade Pete TerMaat ([GNU's Bulletin vol. 1 no. 5](https://www.gnu.org/bulletins/bull5.html#SEC7), fonte primária). Seu primeiro projeto na FSF foi um novo `egrep` usando algoritmos próprios — origem do GNU grep, conhecido pela velocidade (matchers DFA/KWset). Na mesma época escreveu GNU diff e GNU sort (dezembro de 1988, data que bate com o cabeçalho do nosso `Trabalho1/sort.c`). Depois migrou para arquitetura de CPU: trabalhou na Intel no projeto do Pentium 4 e depois na AMD, hoje de volta à Intel como CPU architect ([entrevista GNU-Friends via Linux.com](https://www.linux.com/news/gnu-friends-interviews-mike-haertel/)).
+**Mike Haertel**
+- St. Olaf College (Minnesota). Verão de 1988: descobriu Emacs/GCC, escreveu para Richard Stallman e foi contratado pela FSF junto com o colega de faculdade Pete TerMaat ([GNU's Bulletin v1n5](https://www.gnu.org/bulletins/bull5.html#SEC7), fonte primária).
+- Escreveu o motor de casamento de padrões original do GNU grep (Boyer-Moore + matchers DFA/kwset) — autor principal do grep do fim dos anos 1980 até os 2000. Na mesma leva, GNU diff e GNU sort (dezembro de 1988, data que bate com o cabeçalho do nosso `Trabalho1/sort.c`).
+- **21/ago/2010:** postou na lista `freebsd-current` uma explicação hoje clássica de por que o GNU grep é rápido — fonte primária recuperada: [lists.freebsd.org/pipermail/freebsd-current/2010-August/019310.html](https://lists.freebsd.org/pipermail/freebsd-current/2010-August/019310.html). Ele descreve dois truques: (1) "avoids looking at every input byte" — lê em buffer grande e só localiza quebras de linha depois de achar um match, em vez de quebrar a entrada por linha; (2) executa menos de 3 instruções x86 por byte examinado, via Boyer-Moore com loop desenrolado; usa `mmap()` em vez de `read()` (ganho de >20% medido por ele). Frase dele: *"The key to making programs fast is to make them do practically nothing."*
+- **Gancho pro relatório:** essa filosofia — fazer o mínimo de trabalho por byte — é exatamente o que aparece em `try_growbuf`/`begfield`/`limfield` no nosso subconjunto (buffer que dobra em vez de realocar a cada linha, varredura de campo via ponteiro sem cópia). Dois programas escritos independentemente, mesma cabeça de engenharia por trás.
+- Depois migrou para arquitetura de CPU: Intel (projeto do Pentium 4), depois AMD, hoje de volta à Intel como CPU architect (LinkedIn/diretórios de indústria, consistente com BA em St. Olaf).
+- Nota: um blog atribui a Haertel a co-arquitetura do AMD-V (virtualização da AMD) — sem fonte primária confiável, não citar no relatório sem confirmar.
 
-> Nota: um blog atribui a Haertel a co-arquitetura do AMD-V (virtualização da AMD), mas não achamos fonte primária confiável pra isso — não citar no relatório sem confirmar.
-
-**Paul Eggert** — nascido em 04/12/1954. Graduação na Rice University, PhD em Ciência da Computação pela UCLA em 1980 ([página oficial UCLA Samueli](https://samueli.ucla.edu/people/paul-eggert/)). Passou por UC Santa Barbara, Silogic, Unisys, foi CTO da Twin Sun Inc. (serviços técnicos em GNU/Linux/BSD para o mercado japonês) e hoje é Teaching Professor no Departamento de Ciência da Computação da UCLA. Mantém o [tz database](https://en.wikipedia.org/wiki/Tz_database) (IANA) desde 2005 — criou a convenção de nomes tipo `America/New_York` — e contribui com Autoconf, Diffutils, GNU RCS, gzip, Bison, Emacs, GCC, glibc, GNU tar e GNU Coreutils (co-autor/mantenedor de `sort.c` ao lado de Haertel). Recebeu o [FSF Award for the Advancement of Free Software (2021)](https://www.cs.ucla.edu/professor-paul-eggert-awarded-fsf-free-software-awards/) e é conhecido na mídia como "Time Zone King" pelo trabalho voluntário no tz database.
+**Paul Eggert**
+- Nascido em 04/12/1954. Rice University (Engenharia Elétrica — Rice não tinha departamento de CS na época), formou-se em 1975. PhD em Ciência da Computação pela UCLA, 1980 ([página oficial UCLA Samueli](https://samueli.ucla.edu/people/paul-eggert/); perfil detalhado: [Rice Magazine, "The Time Zone Keeper", primavera de 2025](https://magazine.rice.edu/spring-2025/time-zone-keeper)).
+- Deu aula na UC Santa Barbara por 3 anos, foi para a indústria (cofundou startups, trabalhou na System Development Corporation), depois foi CTO da Twin Sun Inc. (serviços técnicos em GNU/Linux/BSD para o mercado japonês). Hoje é Teaching Professor no Departamento de Ciência da Computação da UCLA.
+- **Publicações**, além da manutenção de código: "File Systems in User Space" (USENIX Winter 1993, com Douglas Stott Parker Jr.); "Monte Carlo arithmetic: how to gamble with floating point and win" (*Computing in Science & Engineering*, 2000); "Perturbing and evaluating numerical programs without recompilation" (*Software: Practice and Experience*, 2005).
+- **Padrões IETF:** coautor da [RFC 8536](https://www.rfc-editor.org/rfc/rfc8536) e [RFC 9636](https://www.rfc-editor.org/rfc/rfc9636) ("The Time Zone Information Format — TZif") e da RFC 6557 ("Procedures for Maintaining the Time Zone Database") — serve também como a referência acadêmica do critério 6 (passo 10 do roteiro).
+- **tz database:** começou consertando entradas pontuais (Taiwan, Indonésia) no início dos anos 1990, depois de notar inconsistências fazendo negócios em fusos diferentes — "resolveu terminar o serviço" iniciado por Arthur David Olson. Editor oficial na IANA desde 2005, trabalho não remunerado, em paralelo às aulas. Método de pesquisa inclui almanaques de astrólogo, documentos legais, arquivos de governo e horários antigos de trem (ex.: Marrocos muda o horário no Ramadã por observação astronômica). Criou a convenção de nomes `America/New_York`.
+- Outras contribuições GNU: Autoconf, Bison, Diffutils, GNU RCS (mantenedor desde 1989), gzip, Emacs, GCC, glibc, GNU tar e GNU Coreutils (co-autor/mantenedor de `sort.c` ao lado de Haertel).
+- Reconhecimento: [FSF Award for the Advancement of Free Software (2021)](https://www.cs.ucla.edu/professor-paul-eggert-awarded-fsf-free-software-awards/), Lockheed Martin Excellence in Teaching Award (2012); "Time Zone King" na mídia (National Geographic, The Register, Rice Magazine).
 
 Instituição/projeto em comum: ambos ligados ao **GNU Project / Free Software Foundation**; o código estudado vive hoje no guarda-chuva do **GNU Coreutils**.
 
 ### Convenções de codificação
 
-Levantadas a partir do subconjunto escolhido (linhas 1802-4444):
+Fonte normativa: [GNU Coding Standards, seção Formatting](https://www.gnu.org/prep/standards/html_node/Formatting.html) (citações diretas). Evidência levantada no subconjunto escolhido (linhas 1802-4444):
 
-- **Indentação:** 2 espaços por nível, sem tabs no código. Tabs aparecem só pra alinhar o `\` de continuação em macros multi-linha (ex. `CMP_WITH_IGNORE`, `sort.c:3052-3061`, dentro de `keycompare`).
-- **Chaves (estilo GNU):** chave de abertura de bloco fica em linha própria, indentada 2 espaços a mais que o comando que a abre; o conteúdo do bloco, mais 2 espaços. Em funções, a chave abre na coluna 0 (ex. `try_growbuf`, `sort.c:1803-1804`). Diferente do K&R, que colaria a chave na mesma linha do `if`/`for`/assinatura.
-- **Margem:** linhas ficam em torno de 80 colunas no subconjunto (padrão histórico GNU de 79 colunas).
-- **Espaço antes de parênteses:** GNU sempre separa o nome da função do `(` com um espaço, em chamada e declaração — `malloc (alloc)`, `memcpy (newbuf, oldbuf, buf->used)` (`sort.c:1808,1816`). Contraste útil pro vídeo: convenções tipo Linux kernel/K&R não usam esse espaço em chamadas.
+| Regra do padrão (citação direta) | Onde aparece no subconjunto |
+|---|---|
+| "keep the length of source lines to 79 characters or less" | linhas do subconjunto ficam em torno de 80 colunas |
+| "put the open-brace that starts the body of a C function in column one" | `try_growbuf` (`sort.c:1802-1804`), `begfield`, `keycompare`, `sort()` — tipo de retorno numa linha, assinatura na seguinte, `{` sozinha na coluna 0 |
+| "spaces before the open-parentheses and after the commas" | `malloc (alloc)` (`sort.c:1808`), `memcpy (newbuf, oldbuf, buf->used)` (`sort.c:1816`) — contraste útil pro vídeo: K&R/Linux kernel não usam esse espaço em chamadas |
+| "split it before an operator, not after one" | `sort.c:3007-3009` — ternário quebrado com `?`/`:` no início da linha de continuação, dentro de `keycompare` |
+| template `do / { ... } / while (cond);` | `sort.c:3090-3098` — do-while real dentro de `keycompare`, indentação idêntica ao exemplo do padrão |
+| "whatever style you use, please use it consistently" | mesmo estilo do início ao fim, ~2600 linhas entre `try_growbuf` e `sort()` |
+
+Achado extra em `keycompare` (`sort.c:3052-3074`): a macro `CMP_WITH_IGNORE` usa o idioma clássico `do { ... } while (0)` pra fazer uma macro multi-statement se comportar como um único comando — documenta convenção de macro e já é candidato a "truque" (passo 7).
+
+Demais pontos:
+- **Indentação:** 2 espaços por nível, sem tabs no código — tabs só alinham o `\` de continuação em macros multi-linha (ex. `CMP_WITH_IGNORE`, `sort.c:3052-3061`).
 - **Ponteiros:** `*` colado ao identificador, não ao tipo — `char *ptr`, `struct line *line` (`sort.c:1865`).
 - **Identificadores:** `snake_case` para funções e variáveis (`try_growbuf`, `begfield`, `new_linelim`); `MAIÚSCULO` para macros/atributos (`ATTRIBUTE_PURE`, `TAB_DEFAULT`); `struct nome` sempre minúsculo.
 - **Comentários:** bloco `/* ... */` antes da função descrevendo o que ela faz; nomes de parâmetros citados em MAIÚSCULO dentro do texto — ex. "Try to grow BUF according to POLICY" antes de `maybe_growbuf` (`sort.c:1838`).

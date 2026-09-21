@@ -42,13 +42,13 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Subconjunto de funções definido para o relatório/apresentação (ver abaixo)
 - [x] Histórico dos autores (Mike Haertel, Paul Eggert) levantado
 - [x] Convenções de codificação identificadas
-- [ ] Aritmética de ponteiros mapeada no subconjunto
+- [x] Aritmética de ponteiros mapeada no subconjunto
 - [ ] Blocos de responsabilidade e dependências divididos
 - [ ] Diagramas estático e dinâmico
 - [ ] Referência acadêmica levantada
 - [ ] Exemplo de uso com depurador (stack/heap)
 - [ ] Makefile / testes automatizados
-- [ ] Relatório escrito
+- [ ] Relatório escrito (esqueleto `.docx` gerado a partir deste repositório quando o levantamento estiver completo, pra revisão da dupla)
 - [ ] Vídeo gravado e publicado (prazo 22/09)
 
 ### Subconjunto de código selecionado
@@ -81,11 +81,17 @@ Confrontamos o subconjunto direto com o [GNU Coding Standards](https://www.gnu.o
 
 Detalhes e exemplos com número de linha: [CLAUDE.md](./CLAUDE.md#convenções-de-codificação).
 
+### Aritmética de ponteiros
+
+O `struct buffer` de `sort.c` guarda, numa única alocação, o texto das linhas crescendo do início pro fim e a tabela de linhas crescendo do fim pro início — encontrando no meio. Toda a leitura/escrita usa ponteiro (soma, subtração, incremento/decremento), nunca índice contado à parte: `fillbuf` decrementa o ponteiro da tabela a cada linha nova (`line--`, `sort.c:2080`), usa subtração de ponteiros pra tamanho de linha (`ptr - line_start`) e espaço livre; `begfield`/`limfield` andam com `++ptr`/`ptr += n`; `sort()` reusa a mesma tabela "de trás pra frente" e percorre `files` como array de ponteiros (`*files`, depois `files++`).
+
+Detalhes com número de linha: [CLAUDE.md](./CLAUDE.md#aritmética-de-ponteiros).
+
 ## Entrega
 
-- Vídeo de **até 10 minutos**, apresentando os critérios de avaliação abaixo.
+- **Relatório escrito** + **vídeo de até 10 minutos** apresentando os critérios de avaliação abaixo (ver [Progresso](#progresso)).
 - Link do vídeo hospedado em sistema de compartilhamento de mídia (ex.: Zoom, YouTube).
-- Participação de **todos os integrantes da dupla é obrigatória**; ausência gera desconto de 30% na nota.
+- Participação de **todos os integrantes da dupla é obrigatória** no vídeo; ausência gera desconto de 30% na nota.
 - Cada participante deve se identificar antes de falar e, se possível, manter a webcam ligada.
 - A responsabilidade pelo envio e reprodução do vídeo (link válido, sem falhas de áudio/imagem) é dos autores — falhas nesse sentido resultam em trabalho não avaliado.
 

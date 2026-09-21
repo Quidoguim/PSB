@@ -13,9 +13,10 @@ Study, understand, and present a GNU utility and/or C standard library (GLIBC) f
 - **Chosen topic:** [`sort.c`](https://github.com/coreutils/coreutils/blob/master/src/sort.c) from GNU Coreutils (to be formally reserved on Moodle 08/09). Originally written by Mike Haertel (1988), currently maintained by Paul Eggert.
 - **Deadline:** deliverable due 22/09.
 - **Minimum scope:** 600 lines of original source (comments and blank lines count). `sort.c` is 5000+ lines, so the presentation should focus on a well-chosen subset of functions rather than the whole file.
-- **Deliverable:** a video (max 10 minutes) hosted on a media-sharing platform (e.g. YouTube, Zoom), covering the evaluation criteria below. Both group members must participate and identify themselves before speaking.
+- **Deliverable:** two parts — (1) a written report and (2) a video (max 10 minutes) hosted on a media-sharing platform (e.g. YouTube, Zoom) presenting it, covering the evaluation criteria below. Both group members must participate in the video and identify themselves before speaking.
 - Full assignment text: [Trabalho1/T1-PSB.pdf](Trabalho1/T1-PSB.pdf); summary in [README.md](README.md).
-- Worked example of the expected report format (professor's model, analysis of `echo.c` by Marco Mangan): [Trabalho1/Modelo-Relatorio-T1-PSB.pdf](Trabalho1/Modelo-Relatorio-T1-PSB.pdf).
+- Worked example of the expected report format (professor's model, analysis of `echo.c` by Marco Mangan): [Trabalho1/Modelo-Relatorio-T1-PSB.pdf](Trabalho1/Modelo-Relatorio-T1-PSB.pdf). Use its structure (Introdução, Idiomas, Divisão em blocos, Dependências, Cenário principal, diagramas, Conclusão, Referências, anexo com código) as the skeleton for the `sort.c` report.
+- **Report workflow:** every section below (Código-fonte, Histórico dos autores, Convenções de codificação, Aritmética de ponteiros, etc.) is the running source of truth for the report's content — keep it here as each roadmap step completes. Once the group signals the content is complete, generate a `.docx` skeleton (via the `docx` skill) following the model's structure, populated from these sections, for the user to review and complete — do not generate it earlier than that unless asked.
 
 ### Código-fonte
 
@@ -34,6 +35,35 @@ Subconjunto escolhido para o relatório/apresentação (~740 linhas, fio narrati
 | `sort()` | 4315-4444 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` (`sort.c:4418`, label `finish`) |
 
 O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do subconjunto) e `sort.c:4418` (dentro de `sort()`, no subconjunto — cobre o critério "desvio incondicional" sem precisar entrar em `main()`).
+
+### Aritmética de ponteiros
+
+**Insight estrutural único que amarra o subconjunto inteiro:** o `struct buffer` de `sort.c` guarda, numa única alocação, o texto das linhas crescendo do início pro fim e a tabela `struct line[]` crescendo do fim pro início — os dois lados se encontram no meio. Toda leitura/escrita nessa estrutura é feita com aritmética de ponteiros (incremento, decremento, subtração), nunca com um índice contado à parte. É o mesmo motivo de `keylist`/`begfield`/`limfield` nunca indexarem strings com `[i]`: um ponteiro guarda a posição, avança sozinho, e a subtração de dois ponteiros já dá o tamanho — sem `strlen`, sem laço extra.
+
+**`begfield` (`sort.c:1862-1903`)**
+- `char *ptr = line->text, *lim = ptr + line->length - 1;` (`1865`) — soma ponteiro+inteiro pra montar o sentinela de fim sem segundo laço.
+- `++ptr` nos quatro `while` (`1878, 1884, 1886, 1893`) — o próprio ponteiro é o contador do laço.
+- `size_t remaining_bytes = lim - ptr;` (`1896`) — subtração de ponteiros dá a distância restante direto, sem recalcular.
+- `ptr += schar;` (`1898`) — soma ponteiro+inteiro pra pular SCHAR bytes de uma vez.
+
+**`limfield` (`sort.c:1909-2009`)** — espelha o mesmo idioma pro fim do campo: `ptr + line->length - 1` (`1912`), `lim - ptr` (`1928`, `2002`), `ptr += echar` (`2004`).
+
+**`fillbuf` (`sort.c:2019-2132`)** — onde a aritmética de ponteiros é mais densa:
+- `char *ptr = buf->buf + buf->used;` (`2039`) — retoma a escrita exatamente onde a última leitura parou, sem guardar posição em variável separada.
+- `size_t avail = (char *) linelim - buf->nlines * line_bytes - ptr;` (`2042`) — uma linha só mistura subtração de ponteiros, cast e multiplicação pra calcular o espaço livre entre a região de texto (crescendo pra frente) e a tabela de linhas (crescendo pra trás).
+- `char *line_start = buf->nlines ? line->text + line->length : buf->buf;` (`2043`) — ponteiro + campo acha o início da próxima linha.
+- `char *ptrlim = ptr + bytes_read;` (`2054`) e `ptrlim[-1]` (`2067`) — índice negativo sobre ponteiro = "o último byte lido", sem variável extra.
+- `ptr = p + 1;` (`2079`) — avança pro byte seguinte ao delimitador achado por `memchr`.
+- `line--;` (`2080`) — **a tabela de linhas é preenchida de trás pra frente**: cada linha nova decrementa o ponteiro em vez de incrementar um índice. É a prova direta do "os dois lados se encontram no meio".
+- `line->length = ptr - line_start;` (`2082`) — subtração de ponteiros = tamanho da linha, sem `strlen`.
+- `buf->used = ptr - buf->buf;` (`2113`) e `buf->left = ptr - line_start;` (`2119`) — ponteiro absoluto convertido de volta pra offset, pra guardar em `struct buffer`.
+- `buf->nlines = buffer_linelim (buf) - line;` (`2114`) — subtração entre dois `struct line *` (não `char *`) conta quantas linhas foram preenchidas nesta leitura.
+
+**`keycompare` (`sort.c:2946-3136`)** — consome os ponteiros já calculados por `begfield`/`limfield`/`fillbuf`: `size_t lena = lima - texta;` (`2970`) repete o idioma "subtração de ponteiro = tamanho". Também usa a string como buffer mutável: `ta[tlena] = '\0';` seguido de restauração (`enda`/`endb`) — trata o ponteiro de texto como array temporário sem alocar cópia.
+
+**`sort()` (`sort.c:4315-4441`)**
+- `char const *file = *files;` (`4330`) seguido de `files++;` (`4357`) — percorre o array de ponteiros `char *const *files` (mesma forma de `argv`) incrementando o próprio ponteiro, em vez de indexar `files[i]`.
+- `line - buf.nlines` (`4407`), `line - 1` (`4413`), `line - i - 1` (`4409`) — reusa a mesma tabela "de trás pra frente" montada em `fillbuf`, confirmando que não é um truque isolado, é um padrão estrutural do arquivo inteiro.
 
 ### Histórico dos autores
 
@@ -102,7 +132,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 3. ~~Levantar o histórico dos autores~~ — feito, ver [Histórico dos autores](#histórico-dos-autores) acima.
 4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.
 5. ~~Identificar convenções de codificação do projeto~~ — feito, ver [Convenções de codificação](#convenções-de-codificação) acima.
-6. Mapear ocorrências de aritmética de ponteiros no subconjunto escolhido.
+6. ~~Mapear ocorrências de aritmética de ponteiros~~ — feito, ver [Aritmética de ponteiros](#aritmética-de-ponteiros) acima.
 7. Levantar os "truques de programador C" (idiomas que reduzem instruções/memória/ciclos) presentes no trecho.
 8. Dividir o subconjunto escolhido em blocos de responsabilidade e funções auxiliares, com tabela de dependências internas/externas (como a Tabela 1/2 do modelo).
 9. Montar o diagrama estático (arquivo/funções e bibliotecas, como a Figura 1 do modelo) e o diagrama dinâmico (fluxo de execução, como a Figura 2).
@@ -115,4 +145,4 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 
 ## Working in this repo
 
-When asked to help with this assignment, keep in mind the deliverable is a *presentation/video*, not a standalone program: work here will typically mean preparing source excerpts, annotated code walkthroughs, diagrams (static/dynamic UML), build/test scaffolding (e.g. a `Makefile` for the chosen `sort.c` subset), and supporting material — not building a new application from scratch.
+When asked to help with this assignment, keep in mind the deliverables are a *written report* and a *video presenting it*, not a standalone program: work here will typically mean preparing source excerpts, annotated code walkthroughs, diagrams (static/dynamic UML), build/test scaffolding (e.g. a `Makefile` for the chosen `sort.c` subset), and supporting material — not building a new application from scratch. No coding is required by the assignment itself.

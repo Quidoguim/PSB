@@ -109,11 +109,18 @@ Desenhados à mão em SVG, preto e branco, estilo yUML igual ao modelo — sem g
 
 Explicação completa: [CLAUDE.md](./CLAUDE.md#diagramas-estático-e-dinâmico).
 
-### Referência acadêmica
+### Referências acadêmicas
 
-Principal: **Knuth, *The Art of Computer Programming, Vol. 3: Sorting and Searching*, 2ª ed. (Addison-Wesley, 1998)**, Seção 5.4 "External Sorting" — é literalmente o algoritmo que `sort()` despacha (ordenação em memória vs. merge sort externo por arquivos temporários), fechando o que ficou de fora do subconjunto (`merge()`, `queue_*`). Alternativa ligada ao autor: RFCs 8536/9636 ou o artigo da USENIX 1993 de Paul Eggert (já em [Histórico dos autores](#histórico-dos-autores)).
+4 referências, cada uma com um papel (padrão do modelo, que usou 3):
 
-Raciocínio completo: [CLAUDE.md](./CLAUDE.md#referência-acadêmica).
+1. Knuth, *The Art of Computer Programming, Vol. 3: Sorting and Searching*, 2ª ed. (1998), Seção 5.4 — o algoritmo que `sort()` implementa.
+2. Eggert & Parker, "File Systems in User Space", USENIX Winter 1993 — autor, sistemas.
+3. Eggert et al., RFC 8536, "The Time Zone Information Format (TZif)" — autor, padronização.
+4. Mayrhauser & Vans (1995), "Program comprehension during software maintenance and evolution", *Computer* 28 — metodologia (mesma do modelo do `echo.c`), embasa a divisão em blocos.
+
+Citações completas: [CLAUDE.md](./CLAUDE.md#referência-acadêmica).
+
+**Nota:** [mflash/DevCPP](https://github.com/mflash/DevCPP) (achado no Moodle) é um template de ambiente C/C++, não obra acadêmica — não entra nessa lista, mas é candidato a base pro `Makefile`/teste do passo 12. Ver [CLAUDE.md](./CLAUDE.md#ambiente-de-buildteste-nota-para-o-passo-12).
 
 ## Entrega
 

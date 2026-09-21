@@ -145,11 +145,16 @@ Ambos verificados visualmente no navegador antes de finalizar (sem sobreposiçã
 
 ### Referência acadêmica
 
-**Principal — sobre o programa:** Donald E. Knuth, *The Art of Computer Programming, Volume 3: Sorting and Searching*, 2ª edição, Addison-Wesley, 1998, ISBN 978-0-201-89685-5 — Seção 5.4 "External Sorting" (5.4.1 "Multiway Merging and Replacement Selection"). É a referência canônica exatamente do algoritmo que `sort()` implementa: despachar entre ordenação em memória e merge sort externo via arquivos temporários quando a entrada não cabe no buffer (nosso subconjunto documenta esse *dispatcher* em [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências); a maquinaria de merge externo que ficou fora do subconjunto — `merge()`, `queue_*`, `merge_tree_*` — é exatamente o "multiway merging" descrito por Knuth). Fecha o critério citando literatura acadêmica sobre a técnica, não sobre os autores.
+O critério pede "ao menos uma"; o modelo do `echo.c` cita 3 (GNU 2021, Mayrhauser e Vans 1995, Spinellis 2003) — seguimos o mesmo padrão com 4, cada uma com um papel diferente (não é enchimento):
 
-**Alternativa — sobre o autor:** qualquer um dos trabalhos de Paul Eggert já levantados em [Histórico dos autores](#histórico-dos-autores) — RFC 8536/9636 ("The Time Zone Information Format") ou o artigo da USENIX Winter 1993 ("File Systems in User Space"). Usar essa opção se a dupla preferir amarrar o critério ao autor em vez do algoritmo (ex.: se o vídeo já for pesado em conteúdo técnico do Knuth na seção de blocos, essa segunda opção varia o ritmo da apresentação).
+1. **Sobre o programa** — Donald E. Knuth, *The Art of Computer Programming, Volume 3: Sorting and Searching*, 2ª edição, Addison-Wesley, 1998, ISBN 978-0-201-89685-5, Seção 5.4 "External Sorting" (5.4.1 "Multiway Merging and Replacement Selection"). Referência canônica do algoritmo que `sort()` implementa: despachar entre ordenação em memória e merge sort externo via arquivos temporários. A maquinaria de merge que ficou fora do subconjunto (`merge()`, `queue_*`, `merge_tree_*`, ver [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências)) é exatamente o "multiway merging" descrito por Knuth.
+2. **Sobre o autor, sistemas** — Paul Eggert e Douglas Stott Parker Jr., "File Systems in User Space", USENIX Winter 1993. Tema de sistemas, mais próximo do escopo de "software básico" da disciplina do que os RFCs de fuso horário.
+3. **Sobre o autor, padronização** — Paul Eggert et al., RFC 8536, "The Time Zone Information Format (TZif)", IETF, 2019. Trabalho de padronização real, não só manutenção de código.
+4. **Sobre a metodologia** — Anneliese Mayrhauser e A. Marie Vans, "Program comprehension during software maintenance and evolution", *Computer* 28, set. 1995, pp. 44–55, doi: 10.1109/2.402076. Mesma referência citada pelo modelo do `echo.c`; embasa academicamente a técnica de dividir o código em blocos e funções auxiliares que usamos em [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências).
 
-A dupla decide qual citar no relatório/vídeo — as duas são válidas pro critério ("relacionada com o programa OU seus autores"); Knuth é a mais forte tecnicamente porque conecta direto com o que já foi mapeado nos Blocos de responsabilidade.
+### Ambiente de build/teste (nota para o passo 12)
+
+O usuário achou [mflash/DevCPP](https://github.com/mflash/DevCPP) no Moodle da disciplina — é um template de ambiente de desenvolvimento C/C++ (GitHub Codespaces + CMake), não uma obra acadêmica, então **não entra na lista de referências acima** (evitar diluir o critério). Mas é candidato natural de base pro `Makefile`/scaffold de compilação e teste do subconjunto escolhido no passo 12, já que vem da própria disciplina — avaliar quando chegar nesse passo.
 
 ### Histórico dos autores
 

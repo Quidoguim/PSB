@@ -99,12 +99,21 @@ teste_maybe_growbuf_sem_policy (void)
 static void
 teste_try_growbuf_alloc_menor_ou_igual (void)
 {
-  /* sort.c:1805 -- "alloc <= buf->alloc" deve recusar diminuir/manter. */
-  struct buffer buf = { .buf = malloc (256), .alloc = 256 };
-  bool cresceu = try_growbuf (&buf, 256);
-  check ("try_growbuf recusa alloc igual ao atual",
-         ! cresceu && buf.alloc == 256,
-         "esperava false quando alloc pedido == alloc atual");
+  /* sort.c:1805 -- "alloc <= buf->alloc" deve recusar quando o pedido
+     nao aumenta o buffer. ATENCAO (achado ao rodar os testes pela
+     primeira vez): essa comparacao usa o ALLOC JA ALINHADO por
+     line_aligned_size (sort.c:1623-1636), nao o valor original passado
+     -- e line_aligned_size SEMPRE aumenta o valor em pelo menos 1 byte
+     (mesmo quando ja eh multiplo do alinhamento, o padding vira um
+     bloco inteiro em vez de zero: "alignment - size % alignment" da
+     "alignment" quando o resto eh 0). Por isso pedir exatamente
+     buf->alloc NAO basta pra recusar -- so um pedido pequeno o
+     suficiente pra que ATE DEPOIS de alinhado continue <= buf->alloc. */
+  struct buffer buf = { .buf = malloc (1000), .alloc = 1000 };
+  bool cresceu = try_growbuf (&buf, 1); /* aligned(1) = 32 (sizeof struct line), 32 <= 1000 */
+  check ("try_growbuf recusa quando o alloc alinhado nao ultrapassa o atual",
+         ! cresceu && buf.alloc == 1000,
+         "esperava false: aligned(1)=32 <= buf->alloc=1000");
   free (buf.buf);
 }
 

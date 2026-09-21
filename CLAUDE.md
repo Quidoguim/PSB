@@ -133,6 +133,16 @@ Formato equivalente às Tabelas 1 (Dependências) e 2 (Blocos) do modelo — ada
 
 A última linha da tabela é importante pro roteiro do vídeo: `sort()` é apresentado como *dispatcher* (o bloco "laço de leitura via `fillbuf`" acima), mas o interior de `sortlines`/`merge`/`queue_*` fica fora do subconjunto — vale dizer isso explicitamente na apresentação, não deixar implícito.
 
+### Diagramas estático e dinâmico
+
+Desenhados à mão em SVG (sem gerador automático), estilo simples preto e branco — retângulo/losango/seta, igual ao yUML usado no modelo do `echo.c`, pra ficar limpo tanto no relatório impresso quanto no vídeo.
+
+**Estático** — [Trabalho1/diagramas/diagrama-estatico-sort.svg](Trabalho1/diagramas/diagrama-estatico-sort.svg): grafo de chamadas entre as 7 funções do subconjunto (não é um diagrama de arquivo/biblioteca como o do modelo, porque aqui as 7 funções estão espalhadas por um único arquivo de 5154 linhas — um grafo de chamadas conta uma história mais útil). Mostra as duas árvores de entrada (`sort()` e `compare()`, cada uma chamada por código fora do subconjunto, em caixa tracejada) convergindo em `begfield()`/`limfield()`, que são consumidas tanto na leitura (`fillbuf`, pré-computa a 1ª chave) quanto na comparação (`keycompare`, chaves seguintes) — o "X" no meio do diagrama *é* o achado central da seção de Aritmética de ponteiros, desenhado. Dependências externas (libc/gnulib/threads) ficam de fora do desenho (já estão na tabela acima) — a legenda completa vai na legenda da figura no relatório, não dentro do SVG.
+
+**Dinâmico** — [Trabalho1/diagramas/diagrama-dinamico-sort.svg](Trabalho1/diagramas/diagrama-dinamico-sort.svg): diagrama de atividades UML do fluxo real de `sort()` durante uma execução — início/fim (bolinha preta / bolinha com anel), decisões em losango (`-k` definidas? mais de uma linha? `nthreads > 1`? há mais dados? gravou direto na saída?) e um laço de volta (rotulado "próximo bloco/arquivo") de `sort()` reconsumindo `fillbuf()` até esgotar a entrada. As duas caixas com borda mais grossa (`fillbuf()` e `sequential_sort()`→`compare()`→`keycompare()`) marcam onde o subconjunto estudado entra na execução; as caixas tracejadas (`sortlines()`, `merge()`) marcam o que fica de fora. Geometria conferida linha a linha contra o código-fonte antes de desenhar (não é um fluxo inventado) — ver [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências) acima pra cada chamada.
+
+Ambos verificados visualmente no navegador antes de finalizar (sem sobreposição de texto/linhas). No `.docx` final, exportar cada um como imagem (PNG em resolução alta) e numerar como Figura 1/Figura 2, com a legenda descritiva no corpo do relatório — não dentro do SVG.
+
 ### Histórico dos autores
 
 **Mike Haertel**
@@ -203,7 +213,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 6. ~~Mapear ocorrências de aritmética de ponteiros~~ — feito, ver [Aritmética de ponteiros](#aritmética-de-ponteiros) acima.
 7. ~~Levantar os "truques de programador C"~~ — feito, ver [Truques de programador C](#truques-de-programador-c) acima.
 8. ~~Dividir o subconjunto em blocos de responsabilidade e dependências~~ — feito, ver [Blocos de responsabilidade e dependências](#blocos-de-responsabilidade-e-dependências) acima.
-9. Montar o diagrama estático (arquivo/funções e bibliotecas, como a Figura 1 do modelo) e o diagrama dinâmico (fluxo de execução, como a Figura 2).
+9. ~~Montar o diagrama estático e o diagrama dinâmico~~ — feito, ver [Diagramas estático e dinâmico](#diagramas-estático-e-dinâmico) acima.
 10. Buscar ao menos uma referência acadêmica relacionada ao programa ou aos autores.
 11. Preparar um exemplo de uso do programa (execução real, consumo de stack/heap) com depurador (gdb) ou ferramenta equivalente.
 12. Criar um `Makefile` (ou script equivalente) para compilar/testar o trecho escolhido — cobre o critério de construção e testes automatizados.

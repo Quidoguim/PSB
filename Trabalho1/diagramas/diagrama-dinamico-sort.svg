@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 1180" role="img" aria-label="Diagrama de atividades do fluxo de execucao de sort(): le blocos com fillbuf, pre-computa chaves com begfield/limfield quando -k esta presente, ordena via compare()/keycompare() no subconjunto estudado (ou via sortlines em paralelo, fora do subconjunto), grava a saida, repete ate esgotar os dados de entrada, e por fim funde temporarios e espera processos filhos.">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000"/>
+    </marker>
+  </defs>
+
+  <style>
+    text { font-family: Helvetica, Arial, sans-serif; fill: #000000; }
+    .act rect { fill: #ffffff; stroke: #000000; stroke-width: 1.6; }
+    .act text { font-size: 12.5px; text-anchor: middle; }
+    .core rect { fill: #ffffff; stroke: #000000; stroke-width: 2.6; }
+    .ext2 rect { fill: #ffffff; stroke: #000000; stroke-width: 1.2; stroke-dasharray: 5 4; }
+    .ext2 text { font-size: 11.5px; text-anchor: middle; }
+    .dec polygon { fill: #ffffff; stroke: #000000; stroke-width: 1.4; }
+    .dec text { font-size: 11.5px; text-anchor: middle; }
+    .edge2 { stroke: #000000; stroke-width: 1.3; fill: none; marker-end: url(#arrow2); }
+    .lbl2 { font-size: 10.5px; fill: #333333; }
+    .yn { font-size: 10.5px; fill: #000000; }
+  </style>
+
+  <!-- start -->
+  <circle cx="380" cy="30" r="13" fill="#000000"/>
+  <path class="edge2" d="M380,43 L380,70"/>
+
+  <!-- sort() -->
+  <g class="act"><rect x="270" y="70" width="220" height="40"/>
+    <text x="380" y="94">sort(): abre arquivo</text>
+  </g>
+  <path class="edge2" d="M380,110 L380,140"/>
+
+  <!-- fillbuf() -->
+  <g class="core"><rect x="230" y="140" width="300" height="56"/>
+    <text x="380" y="162">fillbuf(): lê bloco e</text>
+    <text x="380" y="180">localiza linhas (memchr)</text>
+  </g>
+  <path class="edge2" d="M380,196 L380,226"/>
+
+  <!-- diamond1: -k? -->
+  <g class="dec">
+    <polygon points="380,226 475,266 380,306 285,266"/>
+    <text x="380" y="270">-k definidas?</text>
+  </g>
+  <text class="yn" x="482" y="262">sim</text>
+  <path class="edge2" d="M475,266 L530,266"/>
+  <g class="core"><rect x="530" y="242" width="260" height="48"/>
+    <text x="660" y="262">begfield()/limfield()</text>
+    <text x="660" y="278">pré-computa 1ª chave</text>
+  </g>
+  <path class="edge2" d="M660,290 L660,330 L380,330"/>
+  <text class="yn" x="390" y="321">não</text>
+  <path class="edge2" d="M380,306 L380,330"/>
+  <path class="edge2" d="M380,330 L380,346"/>
+
+  <!-- diamond2: >1 linha? -->
+  <g class="dec">
+    <polygon points="380,346 475,386 380,426 285,386"/>
+    <text x="380" y="390">mais de 1 linha?</text>
+  </g>
+  <text class="yn" x="265" y="382">não</text>
+  <path class="edge2" d="M285,386 L150,386 L150,406"/>
+  <g class="act"><rect x="60" y="406" width="180" height="44"/>
+    <text x="150" y="425">write_unique():</text>
+    <text x="150" y="441">linha única</text>
+  </g>
+
+  <text class="yn" x="390" y="418">sim</text>
+  <path class="edge2" d="M380,426 L380,456"/>
+
+  <!-- diamond3: nthreads>1? -->
+  <g class="dec">
+    <polygon points="380,456 470,494 380,532 290,494"/>
+    <text x="380" y="498">nthreads &gt; 1?</text>
+  </g>
+  <text class="yn" x="476" y="490">sim</text>
+  <path class="edge2" d="M470,494 L540,494"/>
+  <g class="ext2"><rect x="540" y="470" width="240" height="48"/>
+    <text x="660" y="490">sortlines() — paralelo</text>
+    <text x="660" y="506">(fora do subconjunto)</text>
+  </g>
+
+  <text class="yn" x="390" y="550">não</text>
+  <path class="edge2" d="M380,532 L380,562"/>
+  <g class="core"><rect x="210" y="562" width="340" height="56"/>
+    <text x="380" y="584">sequential_sort(): compare()</text>
+    <text x="380" y="602">→ keycompare() por chave -k</text>
+  </g>
+
+  <path class="edge2" d="M660,518 L660,650 L380,650"/>
+  <path class="edge2" d="M380,618 L380,650"/>
+  <g class="act"><rect x="260" y="650" width="240" height="44"/>
+    <text x="380" y="669">write_unique():</text>
+    <text x="380" y="685">linhas ordenadas</text>
+  </g>
+
+  <!-- merge single-line + sorted-lines branches -->
+  <path class="edge2" d="M150,450 L150,732 L240,732"/>
+  <path class="edge2" d="M380,694 L380,732"/>
+  <g class="act"><rect x="240" y="732" width="280" height="44"/>
+    <text x="380" y="758">grava saída final/temporário</text>
+  </g>
+
+  <!-- diamond4: há mais dados? -->
+  <path class="edge2" d="M380,776 L380,796"/>
+  <g class="dec">
+    <polygon points="380,796 475,836 380,876 285,836"/>
+    <text x="380" y="840">há mais dados?</text>
+  </g>
+  <text class="yn" x="482" y="832">sim</text>
+  <path class="edge2" d="M475,836 L805,836 L805,168 L530,168"/>
+  <text class="lbl2" x="805" y="502" transform="rotate(-90 805 502)" text-anchor="middle">próximo bloco/arquivo</text>
+
+  <text class="yn" x="390" y="886">não</text>
+  <path class="edge2" d="M380,876 L380,900"/>
+
+  <!-- finish -->
+  <g class="act"><rect x="280" y="900" width="200" height="40"/>
+    <text x="380" y="924">finish: libera buffer</text>
+  </g>
+  <path class="edge2" d="M380,940 L380,960"/>
+
+  <!-- diamond5: gravou direto? -->
+  <g class="dec">
+    <polygon points="380,960 475,1000 380,1040 285,1000"/>
+    <text x="380" y="996">gravou direto na</text>
+    <text x="380" y="1010">saída final?</text>
+  </g>
+  <text class="yn" x="265" y="996">não</text>
+  <path class="edge2" d="M285,1000 L165,1000 L165,1020"/>
+  <g class="ext2"><rect x="60" y="1020" width="210" height="48"/>
+    <text x="165" y="1040">merge(): junta temp.</text>
+    <text x="165" y="1056">(fora do subconjunto)</text>
+  </g>
+
+  <text class="yn" x="390" y="1050">sim</text>
+  <path class="edge2" d="M380,1040 L380,1082"/>
+  <path class="edge2" d="M165,1068 L165,1082 L380,1082"/>
+
+  <!-- reap_all -->
+  <g class="act"><rect x="260" y="1082" width="240" height="40"/>
+    <text x="380" y="1106">reap_all(): espera filhos</text>
+  </g>
+  <path class="edge2" d="M380,1122 L380,1140"/>
+
+  <!-- end -->
+  <circle cx="380" cy="1156" r="15" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <circle cx="380" cy="1156" r="8" fill="#000000"/>
+</svg>

@@ -45,7 +45,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Aritmética de ponteiros mapeada no subconjunto
 - [x] Truques de programador C levantados
 - [x] Blocos de responsabilidade e dependências divididos
-- [ ] Diagramas estático e dinâmico
+- [x] Diagramas estático e dinâmico
 - [ ] Referência acadêmica levantada
 - [ ] Exemplo de uso com depurador (stack/heap)
 - [ ] Makefile / testes automatizados
@@ -99,6 +99,15 @@ Detalhes com número de linha e fontes: [CLAUDE.md](./CLAUDE.md#truques-de-progr
 Cada uma das 7 funções quebrada em sub-blocos (tipo Tabela 2 do modelo — ex.: `fillbuf` = reaproveita sobra + laço de leitura + trata EOF/cresce buffer) e tabela de dependências internas/externas (tipo Tabela 1): libc (`malloc`, `memchr`, `fread`...), gnulib/coreutils (`to_uchar`, `xmemcoll0`, `filenvercmp`...) e funções do próprio `sort.c` fora do subconjunto — inclusive a maquinaria de threads/merge que `sort()` chama mas a gente não detalha (`sortlines`, `merge`, `queue_*`).
 
 Tabelas completas com número de linha: [CLAUDE.md](./CLAUDE.md#blocos-de-responsabilidade-e-dependências).
+
+### Diagramas estático e dinâmico
+
+Desenhados à mão em SVG, preto e branco, estilo yUML igual ao modelo — sem gerador automático:
+
+- **Estático** — [diagrama-estatico-sort.svg](./Trabalho1/diagramas/diagrama-estatico-sort.svg): grafo de chamadas entre as 7 funções; `begfield()`/`limfield()` aparecem uma vez só, recebendo seta de `fillbuf()` (leitura) e de `keycompare()` (comparação) — o "X" no meio é o mesmo achado da seção de Aritmética de ponteiros.
+- **Dinâmico** — [diagrama-dinamico-sort.svg](./Trabalho1/diagramas/diagrama-dinamico-sort.svg): diagrama de atividades UML do fluxo real de `sort()`, com as decisões (`-k`? mais de 1 linha? `nthreads>1`? há mais dados? gravou direto?) e o laço de volta até esgotar a entrada. Caixas de borda grossa marcam onde o subconjunto entra na execução; caixas tracejadas marcam o que fica de fora (`sortlines`, `merge`).
+
+Explicação completa: [CLAUDE.md](./CLAUDE.md#diagramas-estático-e-dinâmico).
 
 ## Entrega
 

@@ -43,6 +43,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Histórico dos autores (Mike Haertel, Paul Eggert) levantado
 - [x] Convenções de codificação identificadas
 - [x] Aritmética de ponteiros mapeada no subconjunto
+- [x] Truques de programador C levantados
 - [ ] Blocos de responsabilidade e dependências divididos
 - [ ] Diagramas estático e dinâmico
 - [ ] Referência acadêmica levantada
@@ -86,6 +87,12 @@ Detalhes e exemplos com número de linha: [CLAUDE.md](./CLAUDE.md#convenções-d
 O `struct buffer` de `sort.c` guarda, numa única alocação, o texto das linhas crescendo do início pro fim e a tabela de linhas crescendo do fim pro início — encontrando no meio. Toda a leitura/escrita usa ponteiro (soma, subtração, incremento/decremento), nunca índice contado à parte: `fillbuf` decrementa o ponteiro da tabela a cada linha nova (`line--`, `sort.c:2080`), usa subtração de ponteiros pra tamanho de linha (`ptr - line_start`) e espaço livre; `begfield`/`limfield` andam com `++ptr`/`ptr += n`; `sort()` reusa a mesma tabela "de trás pra frente" e percorre `files` como array de ponteiros (`*files`, depois `files++`).
 
 Detalhes com número de linha: [CLAUDE.md](./CLAUDE.md#aritmética-de-ponteiros).
+
+### Truques de programador C
+
+Oito achados com linha exata: tabelas indexadas por byte em vez de comparação em cadeia (`blanks[to_uchar (*ptr)]`, protegido contra sign-extension pelo `to_uchar()` do `system.h` do coreutils); contagem regressiva embutida em `while (ptr < lim && eword--)`; crescimento geométrico (triplica) do buffer em `maybe_growbuf`; small-buffer optimization com `char stackbuf[4000]` em `keycompare` pra evitar `malloc` no caso comum; terminação NUL temporária in-place na mesma função; macro segura com `do { ... } while (0)` em `CMP_WITH_IGNORE`; `ATTRIBUTE_PURE` em `limfield` (atributo `pure` do GCC, habilita eliminação de subexpressão comum); e a tabela de linhas bidirecional já descrita acima.
+
+Detalhes com número de linha e fontes: [CLAUDE.md](./CLAUDE.md#truques-de-programador-c).
 
 ## Entrega
 

@@ -65,6 +65,25 @@ O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do 
 - `char const *file = *files;` (`4330`) seguido de `files++;` (`4357`) — percorre o array de ponteiros `char *const *files` (mesma forma de `argv`) incrementando o próprio ponteiro, em vez de indexar `files[i]`.
 - `line - buf.nlines` (`4407`), `line - 1` (`4413`), `line - i - 1` (`4409`) — reusa a mesma tabela "de trás pra frente" montada em `fillbuf`, confirmando que não é um truque isolado, é um padrão estrutural do arquivo inteiro.
 
+### Truques de programador C
+
+**1. Tabelas indexadas por byte em vez de comparação em cadeia** — `#define UCHAR_LIM (UCHAR_MAX + 1)` (`sort.c:83`), `static bool blanks[UCHAR_LIM];` (`sort.c:270`), `static char const unit_order[UCHAR_LIM] = {...}` (`sort.c:2136-2164`). `blanks[to_uchar (*ptr)]` (usado em `begfield`/`limfield`, ex. `sort.c:1883,1892,1936`) vira **uma leitura de memória** em vez de comparar `*ptr` contra espaço/tab um a um — clássica troca de branches por lookup table, exatamente o que o critério pede ("reduz número de instruções geradas/executadas").
+   - Depende de `to_uchar()`, definido em `system.h` do coreutils como `static inline unsigned char to_uchar (char ch) { return ch; }`, com o comentário original: *"Convert a possibly-signed character to an unsigned character. This is a bit safer than casting to unsigned char, since it catches some type errors that the cast doesn't."* ([fonte: system.h, coreutils 8.23](http://agentzh.org/misc/code/coreutils/system.h.html)). Sem essa conversão, um byte ≥ 128 num `char` signed vira índice **negativo** ao indexar `blanks[]` — comportamento indefinido/corrupção de memória. É um dos erros clássicos de programador C iniciante que o código evita sistematicamente.
+
+**2. Contagem regressiva embutida na condição do laço** — `while (ptr < lim && eword--)` (`sort.c:1926,1934`), `while (ptr < lim && sword--)` (`sort.c:1873,1881`). O decremento acontece dentro da própria condição do `while`, avaliado por curto-circuito só quando `ptr < lim` já é verdade — dispensa uma linha e uma variável de controle separada. É literalmente o idioma "contagem regressiva" citado por nome no enunciado da disciplina.
+
+**3. Crescimento geométrico (amortizado) do buffer** — `maybe_growbuf` (`sort.c:1840-1857`): `if (buf->alloc <= policy->limit / 3) alloc = buf->alloc * 3;` — triplica o tamanho do buffer em vez de crescer sob demanda linha a linha. `realloc` a cada poucas linhas em vez de a cada linha muda o custo total de O(n²) pra O(n) amortizado — a mesma ideia por trás do crescimento de um `std::vector` (C++) ou de uma lista do Python, aqui implementada à mão em C.
+
+**4. Small-buffer optimization (evita heap no caso comum)** — `keycompare` (`sort.c:2985-3000`): `char stackbuf[4000];` seguido de `if (size <= sizeof stackbuf) ta = stackbuf; else ta = allocated = xmalloc (size);`. Só aloca no heap quando a chave de ordenação não cabe nos 4000 bytes da pilha — no caso comum (linhas curtas), zero `malloc`/`free` por comparação, numa função chamada uma vez por par de linhas no sort inteiro.
+
+**5. Terminação NUL temporária, in-place** — `keycompare` (`sort.c:2981-3046`): `char enda = ta[tlena]; ... ta[tlena] = '\0'; ... ta[tlena] = enda;`. Toma emprestado 1 byte do próprio buffer compartilhado pra terminar a "string" temporariamente (funções como `xmemcoll0`/`numcompare` esperam C-strings), e devolve o byte original depois — evita copiar a chave pra um buffer C-string separado.
+
+**6. Macro segura com `do { ... } while (0)`** — `CMP_WITH_IGNORE` (`sort.c:3052-3074`): embrulha um bloco com `if`/`while` aninhados, permitindo chamar a macro como `CMP_WITH_IGNORE (a, b);` — com ponto e vírgula, em qualquer lugar que aceitaria uma instrução única — sem os bugs clássicos de macro multi-statement (dangling `else`, `if` sem chaves engolindo só o primeiro comando).
+
+**7. `ATTRIBUTE_PURE`** — em `limfield` (`sort.c:1908`) e em duas funções vizinhas fora do subconjunto (`human_numcompare` `2218`, `numcompare` `2238`, pra contexto). É o atributo `pure` do GCC: diz ao compilador que a função não tem efeitos colaterais e o retorno depende só dos parâmetros, então chamadas repetidas podem ser eliminadas por CSE (common subexpression elimination) e participar de otimização de laço "do mesmo jeito que um operador aritmético" ([GCC, Common Function Attributes](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html)). Reduz instruções executadas via decisão do compilador, não do runtime — encaixa direto na definição do critério.
+
+**8. Tabela de linhas bidirecional numa única alocação** — já detalhado em [Aritmética de ponteiros](#aritmética-de-ponteiros): texto crescendo pra frente e tabela de `struct line` crescendo pra trás dividem o mesmo bloco de memória. Evita duas alocações separadas (uma pro texto, outra pro array de structs) e mantém os dois contíguos — amigável a cache, sem indireção extra pra achar a linha N.
+
 ### Histórico dos autores
 
 **Mike Haertel**
@@ -133,7 +152,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 4. ~~Escolher o subconjunto de funções a apresentar~~ — feito, ver tabela em [Código-fonte](#código-fonte) acima.
 5. ~~Identificar convenções de codificação do projeto~~ — feito, ver [Convenções de codificação](#convenções-de-codificação) acima.
 6. ~~Mapear ocorrências de aritmética de ponteiros~~ — feito, ver [Aritmética de ponteiros](#aritmética-de-ponteiros) acima.
-7. Levantar os "truques de programador C" (idiomas que reduzem instruções/memória/ciclos) presentes no trecho.
+7. ~~Levantar os "truques de programador C"~~ — feito, ver [Truques de programador C](#truques-de-programador-c) acima.
 8. Dividir o subconjunto escolhido em blocos de responsabilidade e funções auxiliares, com tabela de dependências internas/externas (como a Tabela 1/2 do modelo).
 9. Montar o diagrama estático (arquivo/funções e bibliotecas, como a Figura 1 do modelo) e o diagrama dinâmico (fluxo de execução, como a Figura 2).
 10. Buscar ao menos uma referência acadêmica relacionada ao programa ou aos autores.

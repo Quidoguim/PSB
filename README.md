@@ -48,7 +48,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Diagramas estático e dinâmico
 - [x] Referência acadêmica levantada
 - [x] Exemplo de uso com execução real (stack/heap)
-- [ ] Makefile / testes automatizados
+- [x] Makefile / testes automatizados (12/12 passando)
 - [ ] Relatório escrito (esqueleto `.docx` gerado a partir deste repositório quando o levantamento estiver completo, pra revisão da dupla)
 - [ ] Vídeo gravado e publicado (prazo 22/09)
 
@@ -127,6 +127,17 @@ Citações completas: [CLAUDE.md](./CLAUDE.md#referência-acadêmica).
 [harness_subconjunto.c](./Trabalho1/exemplo-uso/harness_subconjunto.c) — cópia verbatim de 5 funções do subconjunto (`try_growbuf`, `maybe_growbuf`, `begfield`, `limfield`, `buffer_linelim`) compiladas isoladas com stubs mínimos, já que `sort.c` completo não compila sem a árvore de build do coreutils. gdb local ficou bloqueado pelo ambiente (mesmo bloqueio de rede do `pacman`) — rodamos num compilador online real (gcc 13.2.0) em vez de prever a saída. [Saída real](./Trabalho1/exemplo-uso/saida-exemplo.txt): buffer de heap crescendo `64→224→704→2144→5024` bytes (bate com o crescimento ×3 documentado em Truques), endereços de pilha reais em `begfield`/`limfield`, e um achado não planejado — o campo extraído veio com o separador incluído (`" 42"`), comportamento documentado no próprio código, não bug.
 
 Detalhes: [CLAUDE.md](./CLAUDE.md#exemplo-de-uso-execução-stackheap).
+
+### Construção e testes automatizados
+
+O enunciado não fixa uma quantidade mínima de testes — estipulamos a nossa: **12 testes** (1 caminho normal + 1 borda por dupla de funções com lógica condicional), cobrindo as 6 funções do subconjunto. Sem framework externo, `exit(1)` se algo falhar (pensado pra `make test`, não conferência visual).
+
+- [subconjunto.h](./Trabalho1/exemplo-uso/subconjunto.h) — as 6 funções + stubs, compartilhado entre demo e testes.
+- [testes.c](./Trabalho1/exemplo-uso/testes.c) · [Makefile](./Trabalho1/exemplo-uso/Makefile) (`all`/`run`/`test`/`clean` — Makefile plano, não o CMake do DevCPP, porque o critério pede "make") · [saída real](./Trabalho1/exemplo-uso/saida-testes.txt): **12/12 passando**.
+
+**Achado real** (não decoração): na primeira rodada deu 11/12 — o teste estava errado, não o `sort.c`. `try_growbuf` compara o alloc **já alinhado** por `line_aligned_size`, que sempre aumenta o valor em pelo menos 1 byte mesmo quando já é múltiplo do alinhamento. Corrigido; histórico completo no arquivo de saída.
+
+Raciocínio completo: [CLAUDE.md](./CLAUDE.md#construção-e-testes-automatizados).
 
 ## Entrega
 

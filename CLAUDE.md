@@ -165,9 +165,16 @@ Não deu pra usar gdb interativo: o gcc local (MSYS2, `C:\msys64\ucrt64\bin\gcc.
 
 **Achado não planejado, só apareceu ao rodar de verdade:** o campo extraído veio `" 42"` — com o espaço na frente, não `"42"` limpo. Não é bug: é o comportamento documentado no próprio comentário de `begfield` (`sort.c:1869-1871`, "the leading field separator itself is included in a field when -t is absent"), confirmado na prática porque o harness roda com `skipsblanks=false` (equivalente a `sort -k2,2` sem `-b`). Prova que o código foi executado e entendido, não só lido — bom ponto pra puxar no vídeo.
 
-### Ambiente de build/teste (nota para o passo 12)
+### Construção e testes automatizados
 
-O usuário achou [mflash/DevCPP](https://github.com/mflash/DevCPP) no Moodle da disciplina — é um template de ambiente de desenvolvimento C/C++ (GitHub Codespaces + CMake), não uma obra acadêmica, então **não entra na lista de referências acima** (evitar diluir o critério). Mas é candidato natural de base pro `Makefile`/scaffold de compilação e teste do subconjunto escolhido no passo 12, já que vem da própria disciplina — avaliar quando chegar nesse passo.
+**Atenção redobrada aqui:** a professora enfatizou em aula que testes automatizados costumam sair mal-feitos ("muita gente não sabe fazê-los"). O enunciado não fixa uma quantidade mínima de testes — **estipulamos a nossa**: pelo menos 1 teste de caminho normal + 1 de caso de borda para cada dupla de funções do subconjunto com lógica condicional não trivial. Resultado: **12 testes**, cobrindo as 6 funções do subconjunto (5 sobre `try_growbuf`/`maybe_growbuf`/heap, 5 sobre `begfield`/`limfield`/ponteiros — as duas restantes, `buffer_linelim`/`line_aligned_size`, são testadas indiretamente através das outras, por serem helpers pequenos demais pra merecer teste isolado).
+
+- [Trabalho1/exemplo-uso/subconjunto.h](Trabalho1/exemplo-uso/subconjunto.h) — as 6 funções verbatim + stubs mínimos, extraído do harness do passo 11 pra ser incluído tanto pela demo quanto pelos testes (header-only, sem duplicar código).
+- [Trabalho1/exemplo-uso/testes.c](Trabalho1/exemplo-uso/testes.c) — suíte de testes sem framework externo: um `check()` com contador de passa/falha, saída com `exit(1)` se qualquer teste falhar (pensado pra `make test`/CI, não pra conferência visual).
+- [Trabalho1/exemplo-uso/Makefile](Trabalho1/exemplo-uso/Makefile) — alvos `all`/`run`/`test`/`clean`. Usamos um Makefile plano em vez do CMake do `mflash/DevCPP` porque o critério nomeia "make" especificamente e é mais fácil de ler/avaliar num relatório — o DevCPP (achado pelo usuário no Moodle da disciplina, não é obra acadêmica, por isso não entra nas [Referências acadêmicas](#referência-acadêmica)) serviu de referência de toolchain (gcc), não de sistema de build.
+- [Trabalho1/exemplo-uso/saida-testes.txt](Trabalho1/exemplo-uso/saida-testes.txt) — saída real de `make test` (mesmo processo do passo 11: gdb/gcc local bloqueado pelo ambiente, rodamos num compilador online real via API do Wandbox). **12/12 passando**, status 0.
+
+**Achado real ao rodar os testes pela primeira vez (não inventado pra parecer bonito):** na primeira rodada deu 11/12 — um teste sobre `try_growbuf` falhou porque a *expectativa do teste* estava errada, não o código de `sort.c`. A comparação `alloc <= buf->alloc` (`sort.c:1805`) usa o valor **já alinhado** por `line_aligned_size` (`sort.c:1623-1636`), não o valor original passado — e `line_aligned_size` sempre aumenta o valor em pelo menos 1 byte, mesmo quando já é múltiplo do alinhamento (o padding vira um bloco inteiro em vez de zero, porque `alignment - size % alignment` dá `alignment` quando o resto é 0 — o mesmo detalhe já registrado em [Truques de programador C](#truques-de-programador-c)). Corrigido o teste pra refletir esse comportamento real; histórico completo em `saida-testes.txt` e no commit `97d25ce`. Vale contar isso no vídeo — mostra que os testes são reais, não decoração.
 
 ### Histórico dos autores
 
@@ -242,7 +249,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 9. ~~Montar o diagrama estático e o diagrama dinâmico~~ — feito, ver [Diagramas estático e dinâmico](#diagramas-estático-e-dinâmico) acima.
 10. ~~Buscar ao menos uma referência acadêmica~~ — feito, ver [Referência acadêmica](#referência-acadêmica) acima.
 11. ~~Preparar um exemplo de uso~~ — feito, ver [Exemplo de uso](#exemplo-de-uso-execução-stackheap) acima.
-12. Criar um `Makefile` (ou script equivalente) para compilar/testar o trecho escolhido — cobre o critério de construção e testes automatizados.
+12. ~~Criar Makefile e testes automatizados~~ — feito, ver [Construção e testes automatizados](#construção-e-testes-automatizados) acima.
 13. Escrever o relatório seguindo a estrutura do modelo.
 14. Preparar os slides/roteiro e gravar o vídeo (até 10 min), com cada integrante se identificando antes de falar.
 15. Publicar o vídeo em plataforma de compartilhamento de mídia e entregar o link até 22/09.

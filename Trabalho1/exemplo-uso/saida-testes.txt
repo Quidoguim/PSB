@@ -1,0 +1,38 @@
+Saída real de testes.c (via "make test")
+Compilador: gcc 13.2.0 (via Wandbox, https://wandbox.org/api/compile.json)
+Flags: -std=gnu17 -Wall -Wextra -O0 -g
+Status de compilação/execução: 0 (12/12 testes passaram)
+
+=== Grupo 1: buffer (heap) -- try_growbuf/maybe_growbuf ===
+  OK   maybe_growbuf cresce quando ha espaco (limit >> alloc)
+  OK   maybe_growbuf converge: alloc final >= limite pedido
+  OK   maybe_growbuf converge sem marcar growth_failed
+  OK   maybe_growbuf nao cresce quando limite <= alloc atual
+  OK   maybe_growbuf com policy=NULL nao cresce nem falha
+  OK   try_growbuf recusa quando o alloc alinhado nao ultrapassa o atual
+  OK   apos crescer, o endereco do buffer muda (malloc novo, nao in-place)
+
+=== Grupo 2: aritmetica de ponteiros -- begfield/limfield ===
+  OK   -k2,2 sem -b inclui o separador: campo == " 42"
+  OK   -k2,2 com -b (skipsblanks) da campo limpo == "42"
+  OK   sword=0 retorna o inicio da linha sem avancar
+  OK   sword alem do numero de campos para em lim (sem estourar o buffer)
+  OK   com -t (tab != TAB_DEFAULT), begfield usa memchr e acha o 2o campo
+
+12/12 testes passaram.
+
+--------------------------------------------------------------------------
+HISTÓRICO (transparência sobre o processo, não só o resultado final):
+
+Na primeira rodada, 11/12 passaram — "try_growbuf recusa alloc igual ao
+atual" falhou. Investigado: a expectativa do teste estava errada, não o
+código de sort.c. try_growbuf compara "alloc <= buf->alloc" (sort.c:1805)
+usando o valor JÁ ALINHADO por line_aligned_size, não o valor original
+passado — e line_aligned_size sempre aumenta o valor em pelo menos 1 byte
+(quando o tamanho já é múltiplo do alinhamento, o padding vira um bloco
+inteiro em vez de zero, por causa de "alignment - size % alignment" dar
+"alignment" quando o resto é 0). Um pedido de alloc==buf->alloc não é
+suficiente pra ser recusado, porque depois de alinhado ele fica MAIOR que
+buf->alloc. Corrigido o teste para refletir esse comportamento real
+(pedir um alloc pequeno o bastante pra que, mesmo alinhado, continue menor
+que o buffer atual) — ver testes.c e o commit 97d25ce.

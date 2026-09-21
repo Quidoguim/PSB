@@ -46,7 +46,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Truques de programador C levantados
 - [x] Blocos de responsabilidade e dependências divididos
 - [x] Diagramas estático e dinâmico
-- [ ] Referência acadêmica levantada
+- [x] Referência acadêmica levantada
 - [ ] Exemplo de uso com depurador (stack/heap)
 - [ ] Makefile / testes automatizados
 - [ ] Relatório escrito (esqueleto `.docx` gerado a partir deste repositório quando o levantamento estiver completo, pra revisão da dupla)
@@ -108,6 +108,12 @@ Desenhados à mão em SVG, preto e branco, estilo yUML igual ao modelo — sem g
 - **Dinâmico** — [diagrama-dinamico-sort.svg](./Trabalho1/diagramas/diagrama-dinamico-sort.svg): diagrama de atividades UML do fluxo real de `sort()`, com as decisões (`-k`? mais de 1 linha? `nthreads>1`? há mais dados? gravou direto?) e o laço de volta até esgotar a entrada. Caixas de borda grossa marcam onde o subconjunto entra na execução; caixas tracejadas marcam o que fica de fora (`sortlines`, `merge`).
 
 Explicação completa: [CLAUDE.md](./CLAUDE.md#diagramas-estático-e-dinâmico).
+
+### Referência acadêmica
+
+Principal: **Knuth, *The Art of Computer Programming, Vol. 3: Sorting and Searching*, 2ª ed. (Addison-Wesley, 1998)**, Seção 5.4 "External Sorting" — é literalmente o algoritmo que `sort()` despacha (ordenação em memória vs. merge sort externo por arquivos temporários), fechando o que ficou de fora do subconjunto (`merge()`, `queue_*`). Alternativa ligada ao autor: RFCs 8536/9636 ou o artigo da USENIX 1993 de Paul Eggert (já em [Histórico dos autores](#histórico-dos-autores)).
+
+Raciocínio completo: [CLAUDE.md](./CLAUDE.md#referência-acadêmica).
 
 ## Entrega
 

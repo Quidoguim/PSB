@@ -143,6 +143,14 @@ Desenhados à mão em SVG (sem gerador automático), estilo simples preto e bran
 
 Ambos verificados visualmente no navegador antes de finalizar (sem sobreposição de texto/linhas). No `.docx` final, exportar cada um como imagem (PNG em resolução alta) e numerar como Figura 1/Figura 2, com a legenda descritiva no corpo do relatório — não dentro do SVG.
 
+### Referência acadêmica
+
+**Principal — sobre o programa:** Donald E. Knuth, *The Art of Computer Programming, Volume 3: Sorting and Searching*, 2ª edição, Addison-Wesley, 1998, ISBN 978-0-201-89685-5 — Seção 5.4 "External Sorting" (5.4.1 "Multiway Merging and Replacement Selection"). É a referência canônica exatamente do algoritmo que `sort()` implementa: despachar entre ordenação em memória e merge sort externo via arquivos temporários quando a entrada não cabe no buffer (nosso subconjunto documenta esse *dispatcher* em [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências); a maquinaria de merge externo que ficou fora do subconjunto — `merge()`, `queue_*`, `merge_tree_*` — é exatamente o "multiway merging" descrito por Knuth). Fecha o critério citando literatura acadêmica sobre a técnica, não sobre os autores.
+
+**Alternativa — sobre o autor:** qualquer um dos trabalhos de Paul Eggert já levantados em [Histórico dos autores](#histórico-dos-autores) — RFC 8536/9636 ("The Time Zone Information Format") ou o artigo da USENIX Winter 1993 ("File Systems in User Space"). Usar essa opção se a dupla preferir amarrar o critério ao autor em vez do algoritmo (ex.: se o vídeo já for pesado em conteúdo técnico do Knuth na seção de blocos, essa segunda opção varia o ritmo da apresentação).
+
+A dupla decide qual citar no relatório/vídeo — as duas são válidas pro critério ("relacionada com o programa OU seus autores"); Knuth é a mais forte tecnicamente porque conecta direto com o que já foi mapeado nos Blocos de responsabilidade.
+
 ### Histórico dos autores
 
 **Mike Haertel**
@@ -214,7 +222,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 7. ~~Levantar os "truques de programador C"~~ — feito, ver [Truques de programador C](#truques-de-programador-c) acima.
 8. ~~Dividir o subconjunto em blocos de responsabilidade e dependências~~ — feito, ver [Blocos de responsabilidade e dependências](#blocos-de-responsabilidade-e-dependências) acima.
 9. ~~Montar o diagrama estático e o diagrama dinâmico~~ — feito, ver [Diagramas estático e dinâmico](#diagramas-estático-e-dinâmico) acima.
-10. Buscar ao menos uma referência acadêmica relacionada ao programa ou aos autores.
+10. ~~Buscar ao menos uma referência acadêmica~~ — feito, ver [Referência acadêmica](#referência-acadêmica) acima.
 11. Preparar um exemplo de uso do programa (execução real, consumo de stack/heap) com depurador (gdb) ou ferramenta equivalente.
 12. Criar um `Makefile` (ou script equivalente) para compilar/testar o trecho escolhido — cobre o critério de construção e testes automatizados.
 13. Escrever o relatório seguindo a estrutura do modelo.

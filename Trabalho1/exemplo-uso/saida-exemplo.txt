@@ -1,0 +1,47 @@
+Saída real de harness_subconjunto.c
+Compilador: gcc 13.2.0 (via Wandbox, https://wandbox.org/api/compile.json)
+Flags: -std=gnu17 -Wall -Wextra -O0 -g
+Motivo de não ser local: o gcc local (MSYS2) foi bloqueado silenciosamente pelo
+ambiente/antivírus corporativo (mesmo problema que bloqueou o pacman por SSL
+antes); não tentamos contornar segurança do sistema, então rodamos num
+compilador online e usamos a saída real de lá.
+Status de compilação/execução: 0 (sem erros, sem warnings)
+
+=== Demonstracao 1: crescimento do buffer (heap), try_growbuf/maybe_growbuf ===
+(sort.c:1802-1857 -- ver 'Truques de programador C' no CLAUDE.md)
+
+buffer inicial : alloc=    64 bytes  endereco=0x2eeb32b0
+crescimento 1 : alloc=   224 bytes  endereco=0x2eeb3300  (buffer antigo foi liberado)
+crescimento 2 : alloc=   704 bytes  endereco=0x2eeb33f0  (buffer antigo foi liberado)
+crescimento 3 : alloc=  2144 bytes  endereco=0x2eeb36c0  (buffer antigo foi liberado)
+crescimento 4 : alloc=  5024 bytes  endereco=0x2eeb3f30  (buffer antigo foi liberado)
+parou de crescer: alloc final=5024 >= limite pedido=5000, growth_failed=false
+
+=== Demonstracao 2: aritmetica de ponteiros (stack), begfield/limfield ===
+(sort.c:1862-2010 -- ver 'Aritmetica de ponteiros' no CLAUDE.md)
+
+linha de entrada: "banana 42 2024-01-05"  (equivalente a rodar: sort -k2,2 -- 3 campos separados por espaco)
+endereco de 'line' (struct local em main): 0x7ffe5b59a8a0
+endereco de 'key'  (struct local em main): 0x7ffe5b59a870
+  [dentro de demo_extrair_campo, 1 nivel abaixo de main]
+  endereco de uma variavel local aqui: 0x7ffe5b59a82c
+  begfield() -> 0x7ffe5b59a8c6  (offset 6 bytes desde line.text)
+  limfield()  -> 0x7ffe5b59a8c9  (offset 9 bytes desde line.text)
+  campo extraido (chave -k2,2): " 42"
+
+diferenca de endereco entre o marcador em main (0x7ffe5b59a86c) e o marcador
+um nivel de pilha abaixo (ver saida acima) mostra o quadro de pilha
+sendo empilhado a cada chamada -- eh o 'consumo de stack' pedido no passo 11.
+
+--------------------------------------------------------------------------
+NOTA (achado ao rodar, não esperado a priori):
+
+O campo extraído veio " 42" — COM o espaço na frente, não "42" limpo. Isso
+não é bug do harness: é o comportamento documentado no próprio comentário
+de begfield() (sort.c:1869-1871): "The leading field separator itself is
+included in a field when -t is absent." Como o harness usa skipsblanks=false
+(equivalente a rodar `sort -k2,2` sem a flag -b), o separador (o espaço)
+fica incluído no início do campo 2 — exatamente como o `sort` real se
+comporta por padrão. Pra obter "42" limpo, seria preciso skipsblanks=true
+(equivalente a `sort -k2b,2` ou `-b`). Confirma que o código foi realmente
+executado e entendido, não só lido.

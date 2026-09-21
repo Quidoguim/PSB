@@ -152,6 +152,19 @@ O critério pede "ao menos uma"; o modelo do `echo.c` cita 3 (GNU 2021, Mayrhaus
 3. **Sobre o autor, padronização** — Paul Eggert et al., RFC 8536, "The Time Zone Information Format (TZif)", IETF, 2019. Trabalho de padronização real, não só manutenção de código.
 4. **Sobre a metodologia** — Anneliese Mayrhauser e A. Marie Vans, "Program comprehension during software maintenance and evolution", *Computer* 28, set. 1995, pp. 44–55, doi: 10.1109/2.402076. Mesma referência citada pelo modelo do `echo.c`; embasa academicamente a técnica de dividir o código em blocos e funções auxiliares que usamos em [Blocos de responsabilidade](#blocos-de-responsabilidade-e-dependências).
 
+### Exemplo de uso (execução, stack/heap)
+
+Não deu pra usar gdb interativo: o gcc local (MSYS2, `C:\msys64\ucrt64\bin\gcc.exe`) está sendo bloqueado silenciosamente pelo ambiente — provavelmente o mesmo antivírus/EDR corporativo que também bloqueou o `pacman` (erros de certificado SSL nos espelhos MSYS2 ao tentar instalar o pacote do gdb). Não tentamos contornar segurança do sistema. A alternativa usada foi rodar o exemplo num compilador online (gcc 13.2.0 real, via API do [Wandbox](https://wandbox.org)) e usar a saída de execução real de lá — não uma previsão nossa.
+
+[Trabalho1/exemplo-uso/harness_subconjunto.c](Trabalho1/exemplo-uso/harness_subconjunto.c) — cópia **verbatim** de 5 funções do subconjunto (`buffer_linelim`, `line_aligned_size`, `try_growbuf`, `maybe_growbuf`, `begfield`, `limfield`; cada uma com o comentário `/* sort.c:linha-linha */` apontando a origem), mais os stubs mínimos necessários (`struct line`/`struct keyfield`/`struct buffer` só com os campos usados, `to_uchar`, `blanks[]`, `ATTRIBUTE_PURE`) pra compilar isolado — o `sort.c` completo não compila sem a árvore de build inteira do coreutils/gnulib (config.h, system.h, argmatch.h etc.), que está fora do escopo do subconjunto.
+
+[Trabalho1/exemplo-uso/saida-exemplo.txt](Trabalho1/exemplo-uso/saida-exemplo.txt) — saída real da execução (status 0, sem erros/warnings). Duas demonstrações:
+
+1. **Heap** — `try_growbuf`/`maybe_growbuf` fazendo um buffer de 64 bytes crescer até passar de 5000: `64 → 224 → 704 → 2144 → 5024` bytes, com endereço de heap diferente a cada rodada (confirma que é `malloc` de um bloco novo + `free` do antigo, não `realloc` in-place) — números reais que batem com a conta feita à mão em [Truques de programador C](#truques-de-programador-c) (crescimento geométrico ×3, com o detalhe de `line_aligned_size` sempre arredondar pra cima em pelo menos um `sizeof(struct line)` extra).
+2. **Stack** — `begfield`/`limfield` extraindo o campo 2 (`-k2,2`) da linha `"banana 42 2024-01-05"`, com endereços de pilha reais de `main()` e de um nível abaixo (`demo_extrair_campo`), mostrando o quadro de pilha sendo empilhado a cada chamada.
+
+**Achado não planejado, só apareceu ao rodar de verdade:** o campo extraído veio `" 42"` — com o espaço na frente, não `"42"` limpo. Não é bug: é o comportamento documentado no próprio comentário de `begfield` (`sort.c:1869-1871`, "the leading field separator itself is included in a field when -t is absent"), confirmado na prática porque o harness roda com `skipsblanks=false` (equivalente a `sort -k2,2` sem `-b`). Prova que o código foi executado e entendido, não só lido — bom ponto pra puxar no vídeo.
+
 ### Ambiente de build/teste (nota para o passo 12)
 
 O usuário achou [mflash/DevCPP](https://github.com/mflash/DevCPP) no Moodle da disciplina — é um template de ambiente de desenvolvimento C/C++ (GitHub Codespaces + CMake), não uma obra acadêmica, então **não entra na lista de referências acima** (evitar diluir o critério). Mas é candidato natural de base pro `Makefile`/scaffold de compilação e teste do subconjunto escolhido no passo 12, já que vem da própria disciplina — avaliar quando chegar nesse passo.
@@ -228,7 +241,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 8. ~~Dividir o subconjunto em blocos de responsabilidade e dependências~~ — feito, ver [Blocos de responsabilidade e dependências](#blocos-de-responsabilidade-e-dependências) acima.
 9. ~~Montar o diagrama estático e o diagrama dinâmico~~ — feito, ver [Diagramas estático e dinâmico](#diagramas-estático-e-dinâmico) acima.
 10. ~~Buscar ao menos uma referência acadêmica~~ — feito, ver [Referência acadêmica](#referência-acadêmica) acima.
-11. Preparar um exemplo de uso do programa (execução real, consumo de stack/heap) com depurador (gdb) ou ferramenta equivalente.
+11. ~~Preparar um exemplo de uso~~ — feito, ver [Exemplo de uso](#exemplo-de-uso-execução-stackheap) acima.
 12. Criar um `Makefile` (ou script equivalente) para compilar/testar o trecho escolhido — cobre o critério de construção e testes automatizados.
 13. Escrever o relatório seguindo a estrutura do modelo.
 14. Preparar os slides/roteiro e gravar o vídeo (até 10 min), com cada integrante se identificando antes de falar.

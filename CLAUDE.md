@@ -86,6 +86,53 @@ O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do 
 
 **8. Tabela de linhas bidirecional numa única alocação** — já detalhado em [Aritmética de ponteiros](#aritmética-de-ponteiros): texto crescendo pra frente e tabela de `struct line` crescendo pra trás dividem o mesmo bloco de memória. Evita duas alocações separadas (uma pro texto, outra pro array de structs) e mantém os dois contíguos — amigável a cache, sem indireção extra pra achar a linha N.
 
+### Blocos de responsabilidade e dependências
+
+Formato equivalente às Tabelas 1 (Dependências) e 2 (Blocos) do modelo — adaptado pra um subconjunto de 7 funções espalhadas pelo arquivo, em vez de um arquivo contínuo de 273 linhas como o `echo.c`.
+
+#### Blocos internos de cada função
+
+| Função | Sub-bloco | Linhas | Responsabilidade |
+|---|---|---|---|
+| `try_growbuf` | validação + alocação | `1805-1810` | confere se o novo tamanho é válido e maior que o atual; aloca o novo buffer |
+| `try_growbuf` | cópia e realocação de ponteiros | `1812-1830` | copia texto e tabela de linhas pro novo buffer; corrige (*fixup*) os ponteiros internos de cada `struct line` pra apontarem pro novo endereço |
+| `try_growbuf` | troca e limpeza | `1832-1836` | libera o buffer antigo, atualiza `buf->buf`/`buf->alloc` |
+| `maybe_growbuf` | política de crescimento | `1843-1857` | decide se vale a pena crescer (respeitando limite), triplica o tamanho ou vai direto ao limite, chama `try_growbuf` e marca falha permanente se malloc negar |
+| `begfield` | pula SWORD campos | `1872-1887` | dois caminhos: delimitador explícito (`-t`) via `memchr`, ou blanks (padrão POSIX) via varredura byte a byte |
+| `begfield` | ajustes finais | `1891-1900` | pula blanks iniciais se `-b`; avança SCHAR bytes sem passar do limite |
+| `limfield` | pula EWORD campos | `1925-1940` | espelha `begfield` pro fim do campo |
+| `limfield` | código morto documentado | `1942-1991` | bloco `#ifdef POSIX_UNSPECIFIED` — nunca compilado por padrão; registra um bug de interpretação relatado por e-mail em 1996 (citado com autor e data no próprio comentário) que os mantenedores decidiram não resolver, por ambiguidade no texto do POSIX — bom material pra "Histórico"/curiosidade no vídeo |
+| `limfield` | avança ECHAR bytes | `1993-2006` | mesmo idioma de `begfield`, pro fim do campo |
+| `fillbuf` | reaproveita sobra do buffer | `2030-2035` | mistura pro início o que sobrou da leitura anterior (`buf->left`) |
+| `fillbuf` | laço de leitura | `2037-2132` | laço externo `while (true)`: lê blocos de `fp`, localiza cada `'\n'` com `memchr`, preenche a tabela de linhas de trás pra frente, pré-computa a posição da primeira chave via `limfield`/`begfield` se houver `-k` |
+| `fillbuf` | EOF e crescimento | `2058-2069`, `2124-2131` | trata fim de arquivo/erro de leitura; se uma linha não coube no buffer, aumenta via `maybe_growbuf`/`xpalloc` e tenta de novo |
+| `keycompare` | prepara campo atual | `2949-2971` | usa posição de campo já calculada (1ª chave) ou recalcula (`limfield`/`begfield`) pras seguintes; mede o tamanho do campo |
+| `keycompare` | despacho por tipo de chave | `2973-3043` | copia com tradução/ignore (pilha ou heap conforme tamanho) e despacha pro comparador certo: numérico, geral, humano, mês, aleatório, versão (`filenvercmp`) ou coleção locale-aware (`xmemcoll0`) |
+| `keycompare` | comparação por ignore-set | `3050-3081` | usa a macro local `CMP_WITH_IGNORE` quando só há `-i`/`-d` sem tradução |
+| `keycompare` | comparação simples | `3082-3105` | sem tradução nem ignore: `memcmp` direto (ou byte a byte se precisar traduzir sem ignorar) |
+| `keycompare` | decide continuar ou parar | `3107-3133` | para na primeira chave com diferença; senão avança pra próxima `-k` |
+| `compare` | tenta pelas chaves | `3150-3155` | delega pra `keycompare`; retorna cedo se houver diferença (ou se `-u`/`-s`) |
+| `compare` | fallback pra linha inteira | `3159-3178` | sem chaves (ou empate nelas): compara a linha toda, locale-aware ou `memcmp` |
+| `sort()` | prepara buffer/política | `4323-4358` | calcula `bytes_per_line` conforme número de threads; inicializa buffer só na primeira vez |
+| `sort()` | laço de leitura via `fillbuf` | `4360-4419` | decide concatenar o próximo arquivo se couber no buffer; escolhe destino (saída final vs. temporário); despacha pro sort paralelo (`sortlines`) ou sequencial conforme `nthreads` |
+| `sort()` | finalização (`goto finish`) | `4417-4441` | libera o buffer; se não escreveu direto na saída, junta (`merge`) os arquivos temporários; sempre espera os processos filhos de compressão (`reap_all`) |
+
+#### Dependências internas (entre as 7 funções do subconjunto)
+
+`sort()` → `fillbuf` → (`begfield`, `limfield`, `maybe_growbuf` → `try_growbuf`); `compare` → `keycompare` → (`begfield`, `limfield`). Ou seja: as duas funções de aritmética de ponteiros (`begfield`/`limfield`) são consumidas tanto na hora de ler o arquivo (`fillbuf`, pré-computo da 1ª chave) quanto na hora de comparar (`keycompare`, chaves seguintes).
+
+#### Dependências externas (1º uso dentro do subconjunto)
+
+| Origem | Identificador | Linha |
+|---|---|---|
+| `<string.h>`/`<stdlib.h>` | `malloc`, `free`, `memcpy`, `memchr`, `memmove`, `memcmp` | `1808`, `1832`, `1816`, `1875`, `2032`, `3101` |
+| `<stdio.h>` | `fread`, `ferror`, `feof` | `2053`, `2060`, `2062` |
+| gnulib/coreutils (`system.h` e módulos) | `to_uchar`, `ATTRIBUTE_PURE`, `MAX`, `MIN`, `NONZERO`, `_GL_CMP`, `xmalloc`, `xpalloc`, `xmemcoll0`, `filenvercmp` | `1883`, `1908`, `2083`, `3084`, `3038`, `3104`, `3000`, `2129`, `3042`, `3032` |
+| `sort.c` — funções auxiliares fora do subconjunto | `buffer_linelim`, `line_aligned_size`, `sort_die`, `key_numeric`, `numcompare`, `general_numcompare`, `human_numcompare`, `getmonth`, `compare_random`, `diff_reversed` | `1813`, `1805`, `2061`, `2973`, `3022`, `3024`, `3026`, `3028`, `3030`, `3135` |
+| `sort.c` — maquinaria de threads/merge (fora do subconjunto, só chamada por `sort()`) | `xfopen`, `sort_buffer_policy`, `initbuf`, `create_temp`, `queue_init`, `merge_tree_init`, `sortlines`, `sequential_sort`, `write_unique`, `merge_tree_destroy`, `queue_destroy`, `xfclose`, `xnmalloc`, `merge`, `reap_all` | `4331`, `4352`, `4354`, `4387`, `4394`, `4396`, `4398`, `4406`, `4409`, `4401`, `4402`, `4379`, `4429`, `4436`, `4440` |
+
+A última linha da tabela é importante pro roteiro do vídeo: `sort()` é apresentado como *dispatcher* (o bloco "laço de leitura via `fillbuf`" acima), mas o interior de `sortlines`/`merge`/`queue_*` fica fora do subconjunto — vale dizer isso explicitamente na apresentação, não deixar implícito.
+
 ### Histórico dos autores
 
 **Mike Haertel**
@@ -155,7 +202,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 5. ~~Identificar convenções de codificação do projeto~~ — feito, ver [Convenções de codificação](#convenções-de-codificação) acima.
 6. ~~Mapear ocorrências de aritmética de ponteiros~~ — feito, ver [Aritmética de ponteiros](#aritmética-de-ponteiros) acima.
 7. ~~Levantar os "truques de programador C"~~ — feito, ver [Truques de programador C](#truques-de-programador-c) acima.
-8. Dividir o subconjunto escolhido em blocos de responsabilidade e funções auxiliares, com tabela de dependências internas/externas (como a Tabela 1/2 do modelo).
+8. ~~Dividir o subconjunto em blocos de responsabilidade e dependências~~ — feito, ver [Blocos de responsabilidade e dependências](#blocos-de-responsabilidade-e-dependências) acima.
 9. Montar o diagrama estático (arquivo/funções e bibliotecas, como a Figura 1 do modelo) e o diagrama dinâmico (fluxo de execução, como a Figura 2).
 10. Buscar ao menos uma referência acadêmica relacionada ao programa ou aos autores.
 11. Preparar um exemplo de uso do programa (execução real, consumo de stack/heap) com depurador (gdb) ou ferramenta equivalente.

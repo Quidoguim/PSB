@@ -44,7 +44,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Convenções de codificação identificadas
 - [x] Aritmética de ponteiros mapeada no subconjunto
 - [x] Truques de programador C levantados
-- [ ] Blocos de responsabilidade e dependências divididos
+- [x] Blocos de responsabilidade e dependências divididos
 - [ ] Diagramas estático e dinâmico
 - [ ] Referência acadêmica levantada
 - [ ] Exemplo de uso com depurador (stack/heap)
@@ -93,6 +93,12 @@ Detalhes com número de linha: [CLAUDE.md](./CLAUDE.md#aritmética-de-ponteiros)
 Oito achados com linha exata: tabelas indexadas por byte em vez de comparação em cadeia (`blanks[to_uchar (*ptr)]`, protegido contra sign-extension pelo `to_uchar()` do `system.h` do coreutils); contagem regressiva embutida em `while (ptr < lim && eword--)`; crescimento geométrico (triplica) do buffer em `maybe_growbuf`; small-buffer optimization com `char stackbuf[4000]` em `keycompare` pra evitar `malloc` no caso comum; terminação NUL temporária in-place na mesma função; macro segura com `do { ... } while (0)` em `CMP_WITH_IGNORE`; `ATTRIBUTE_PURE` em `limfield` (atributo `pure` do GCC, habilita eliminação de subexpressão comum); e a tabela de linhas bidirecional já descrita acima.
 
 Detalhes com número de linha e fontes: [CLAUDE.md](./CLAUDE.md#truques-de-programador-c).
+
+### Blocos de responsabilidade e dependências
+
+Cada uma das 7 funções quebrada em sub-blocos (tipo Tabela 2 do modelo — ex.: `fillbuf` = reaproveita sobra + laço de leitura + trata EOF/cresce buffer) e tabela de dependências internas/externas (tipo Tabela 1): libc (`malloc`, `memchr`, `fread`...), gnulib/coreutils (`to_uchar`, `xmemcoll0`, `filenvercmp`...) e funções do próprio `sort.c` fora do subconjunto — inclusive a maquinaria de threads/merge que `sort()` chama mas a gente não detalha (`sortlines`, `merge`, `queue_*`).
+
+Tabelas completas com número de linha: [CLAUDE.md](./CLAUDE.md#blocos-de-responsabilidade-e-dependências).
 
 ## Entrega
 

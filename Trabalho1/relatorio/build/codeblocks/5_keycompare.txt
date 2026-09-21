@@ -1,0 +1,191 @@
+ 2946  static int
+ 2947  keycompare (struct line const *a, struct line const *b)
+ 2948  {
+ 2949    struct keyfield *key = keylist;
+ 2950  
+ 2951    /* For the first iteration only, the key positions have been
+ 2952       precomputed for us. */
+ 2953    char *texta = a->keybeg;
+ 2954    char *textb = b->keybeg;
+ 2955    char *lima = a->keylim;
+ 2956    char *limb = b->keylim;
+ 2957  
+ 2958    int diff;
+ 2959  
+ 2960    while (true)
+ 2961      {
+ 2962        char const *translate = key->translate;
+ 2963        bool const *ignore = key->ignore;
+ 2964  
+ 2965        /* Treat field ends before field starts as empty fields.  */
+ 2966        lima = MAX (texta, lima);
+ 2967        limb = MAX (textb, limb);
+ 2968  
+ 2969        /* Find the lengths. */
+ 2970        size_t lena = lima - texta;
+ 2971        size_t lenb = limb - textb;
+ 2972  
+ 2973        if (hard_LC_COLLATE || key_numeric (key)
+ 2974            || key->month || key->random || key->version)
+ 2975          {
+ 2976            /* Ordinarily use the keys in-place, temporarily null-terminated.  */
+ 2977            char *ta = texta;
+ 2978            char *tb = textb;
+ 2979            size_t tlena = lena;
+ 2980            size_t tlenb = lenb;
+ 2981            char enda = ta[tlena];
+ 2982            char endb = tb[tlenb];
+ 2983  
+ 2984            void *allocated = NULL;
+ 2985            char stackbuf[4000];
+ 2986  
+ 2987            if (ignore || translate)
+ 2988              {
+ 2989                /* Compute with copies of the keys, which are the result of
+ 2990                   translating or ignoring characters, and which need their
+ 2991                   own storage.  */
+ 2992  
+ 2993                size_t i;
+ 2994  
+ 2995                /* Allocate space for copies.  */
+ 2996                size_t size = lena + 1 + lenb + 1;
+ 2997                if (size <= sizeof stackbuf)
+ 2998                  ta = stackbuf;
+ 2999                else
+ 3000                  ta = allocated = xmalloc (size);
+ 3001                tb = ta + lena + 1;
+ 3002  
+ 3003                /* Put into each copy a version of the key in which the
+ 3004                   requested characters are ignored or translated.  */
+ 3005                for (tlena = i = 0; i < lena; i++)
+ 3006                  if (! (ignore && ignore[to_uchar (texta[i])]))
+ 3007                    ta[tlena++] = (translate
+ 3008                                   ? translate[to_uchar (texta[i])]
+ 3009                                   : texta[i]);
+ 3010  
+ 3011                for (tlenb = i = 0; i < lenb; i++)
+ 3012                  if (! (ignore && ignore[to_uchar (textb[i])]))
+ 3013                    tb[tlenb++] = (translate
+ 3014                                   ? translate[to_uchar (textb[i])]
+ 3015                                   : textb[i]);
+ 3016              }
+ 3017  
+ 3018            ta[tlena] = '\0';
+ 3019            tb[tlenb] = '\0';
+ 3020  
+ 3021            if (key->numeric)
+ 3022              diff = numcompare (ta, tb);
+ 3023            else if (key->general_numeric)
+ 3024              diff = general_numcompare (ta, tb);
+ 3025            else if (key->human_numeric)
+ 3026              diff = human_numcompare (ta, tb);
+ 3027            else if (key->month)
+ 3028              diff = getmonth (ta, NULL) - getmonth (tb, NULL);
+ 3029            else if (key->random)
+ 3030              diff = compare_random (ta, tlena, tb, tlenb);
+ 3031            else if (key->version)
+ 3032              diff = filenvercmp (ta, tlena, tb, tlenb);
+ 3033            else
+ 3034              {
+ 3035                /* Locale-dependent string sorting.  This is slower than
+ 3036                   C-locale sorting, which is implemented below.  */
+ 3037                if (tlena == 0)
+ 3038                  diff = - NONZERO (tlenb);
+ 3039                else if (tlenb == 0)
+ 3040                  diff = 1;
+ 3041                else
+ 3042                  diff = xmemcoll0 (ta, tlena + 1, tb, tlenb + 1);
+ 3043              }
+ 3044  
+ 3045            ta[tlena] = enda;
+ 3046            tb[tlenb] = endb;
+ 3047  
+ 3048            free (allocated);
+ 3049          }
+ 3050        else if (ignore)
+ 3051          {
+ 3052  #define CMP_WITH_IGNORE(A, B)						\
+ 3053    do									\
+ 3054      {									\
+ 3055            while (true)							\
+ 3056              {								\
+ 3057                while (texta < lima && ignore[to_uchar (*texta)])		\
+ 3058                  ++texta;						\
+ 3059                while (textb < limb && ignore[to_uchar (*textb)])		\
+ 3060                  ++textb;						\
+ 3061                if (! (texta < lima && textb < limb))			\
+ 3062                  {							\
+ 3063                    diff = (texta < lima) - (textb < limb);		\
+ 3064                    break;						\
+ 3065                  }							\
+ 3066                diff = to_uchar (A) - to_uchar (B);			\
+ 3067                if (diff)							\
+ 3068                  break;							\
+ 3069                ++texta;							\
+ 3070                ++textb;							\
+ 3071              }								\
+ 3072                                                                          \
+ 3073      }									\
+ 3074    while (0)
+ 3075  
+ 3076            if (translate)
+ 3077              CMP_WITH_IGNORE (translate[to_uchar (*texta)],
+ 3078                               translate[to_uchar (*textb)]);
+ 3079            else
+ 3080              CMP_WITH_IGNORE (*texta, *textb);
+ 3081          }
+ 3082        else
+ 3083          {
+ 3084            size_t lenmin = MIN (lena, lenb);
+ 3085            if (lenmin == 0)
+ 3086              diff = 0;
+ 3087            else if (translate)
+ 3088              {
+ 3089                size_t i = 0;
+ 3090                do
+ 3091                  {
+ 3092                    diff = (to_uchar (translate[to_uchar (texta[i])])
+ 3093                            - to_uchar (translate[to_uchar (textb[i])]));
+ 3094                    if (diff)
+ 3095                      break;
+ 3096                    i++;
+ 3097                  }
+ 3098                while (i < lenmin);
+ 3099              }
+ 3100            else
+ 3101              diff = memcmp (texta, textb, lenmin);
+ 3102  
+ 3103            if (! diff)
+ 3104              diff = _GL_CMP (lena, lenb);
+ 3105          }
+ 3106  
+ 3107        if (diff)
+ 3108          break;
+ 3109  
+ 3110        key = key->next;
+ 3111        if (! key)
+ 3112          return 0;
+ 3113  
+ 3114        /* Find the beginning and limit of the next field.  */
+ 3115        if (key->eword != SIZE_MAX)
+ 3116          lima = limfield (a, key), limb = limfield (b, key);
+ 3117        else
+ 3118          lima = a->text + a->length - 1, limb = b->text + b->length - 1;
+ 3119  
+ 3120        if (key->sword != SIZE_MAX)
+ 3121          texta = begfield (a, key), textb = begfield (b, key);
+ 3122        else
+ 3123          {
+ 3124            texta = a->text, textb = b->text;
+ 3125            if (key->skipsblanks)
+ 3126              {
+ 3127                while (texta < lima && blanks[to_uchar (*texta)])
+ 3128                  ++texta;
+ 3129                while (textb < limb && blanks[to_uchar (*textb)])
+ 3130                  ++textb;
+ 3131              }
+ 3132          }
+ 3133      }
+ 3134  
+ 3135    return diff_reversed (diff, key->reverse);
+ 3136  }

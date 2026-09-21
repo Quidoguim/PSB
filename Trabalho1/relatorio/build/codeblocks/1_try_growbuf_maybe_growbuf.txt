@@ -1,0 +1,56 @@
+ 1802  static bool
+ 1803  try_growbuf (struct buffer *buf, size_t alloc)
+ 1804  {
+ 1805    if (! line_aligned_size (&alloc) || alloc <= buf->alloc)
+ 1806      return false;
+ 1807  
+ 1808    char *newbuf = malloc (alloc);
+ 1809    if (! newbuf)
+ 1810      return false;
+ 1811  
+ 1812    char *oldbuf = buf->buf;
+ 1813    struct line *old_linelim = buffer_linelim (buf);
+ 1814    struct line *old_line = old_linelim - buf->nlines;
+ 1815  
+ 1816    memcpy (newbuf, oldbuf, buf->used);
+ 1817  
+ 1818    struct line *new_linelim = (void *) (newbuf + alloc);
+ 1819    struct line *new_line = new_linelim - buf->nlines;
+ 1820    memcpy (new_line, old_line, buf->nlines * sizeof *new_line);
+ 1821  
+ 1822    for (struct line *line = new_line; line < new_linelim; line++)
+ 1823      {
+ 1824        line->text = newbuf + (line->text - oldbuf);
+ 1825        if (keylist)
+ 1826          {
+ 1827            line->keybeg = newbuf + (line->keybeg - oldbuf);
+ 1828            line->keylim = newbuf + (line->keylim - oldbuf);
+ 1829          }
+ 1830      }
+ 1831  
+ 1832    free (oldbuf);
+ 1833    buf->buf = newbuf;
+ 1834    buf->alloc = alloc;
+ 1835    return true;
+ 1836  }
+ 1837  
+ 1838  /* Try to grow BUF according to POLICY.  Return true if the buffer grew.  */
+ 1839  
+ 1840  static bool
+ 1841  maybe_growbuf (struct buffer *buf, struct sort_buffer_policy *policy)
+ 1842  {
+ 1843    if (! policy || policy->growth_failed || policy->limit <= buf->alloc)
+ 1844      return false;
+ 1845  
+ 1846    size_t alloc;
+ 1847    if (buf->alloc <= policy->limit / 3)
+ 1848      alloc = buf->alloc * 3;
+ 1849    else
+ 1850      alloc = policy->limit;
+ 1851  
+ 1852    if (try_growbuf (buf, alloc))
+ 1853      return true;
+ 1854  
+ 1855    policy->growth_failed = true;
+ 1856    return false;
+ 1857  }

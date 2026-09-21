@@ -1,0 +1,42 @@
+ 1862  static char *
+ 1863  begfield (struct line const *line, struct keyfield const *key)
+ 1864  {
+ 1865    char *ptr = line->text, *lim = ptr + line->length - 1;
+ 1866    size_t sword = key->sword;
+ 1867    size_t schar = key->schar;
+ 1868  
+ 1869    /* The leading field separator itself is included in a field when -t
+ 1870       is absent.  */
+ 1871  
+ 1872    if (tab != TAB_DEFAULT)
+ 1873      while (ptr < lim && sword--)
+ 1874        {
+ 1875          char *sep = memchr (ptr, tab, lim - ptr);
+ 1876          ptr = sep ? sep : lim;
+ 1877          if (ptr < lim)
+ 1878            ++ptr;
+ 1879        }
+ 1880    else
+ 1881      while (ptr < lim && sword--)
+ 1882        {
+ 1883          while (ptr < lim && blanks[to_uchar (*ptr)])
+ 1884            ++ptr;
+ 1885          while (ptr < lim && !blanks[to_uchar (*ptr)])
+ 1886            ++ptr;
+ 1887        }
+ 1888  
+ 1889    /* If we're ignoring leading blanks when computing the Start
+ 1890       of the field, skip past them here.  */
+ 1891    if (key->skipsblanks)
+ 1892      while (ptr < lim && blanks[to_uchar (*ptr)])
+ 1893        ++ptr;
+ 1894  
+ 1895    /* Advance PTR by SCHAR (if possible), but no further than LIM.  */
+ 1896    size_t remaining_bytes = lim - ptr;
+ 1897    if (schar < remaining_bytes)
+ 1898      ptr += schar;
+ 1899    else
+ 1900      ptr = lim;
+ 1901  
+ 1902    return ptr;
+ 1903  }

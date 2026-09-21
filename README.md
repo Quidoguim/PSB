@@ -49,7 +49,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Referência acadêmica levantada
 - [x] Exemplo de uso com execução real (stack/heap)
 - [x] Makefile / testes automatizados (12/12 passando)
-- [ ] Relatório escrito (esqueleto `.docx` gerado a partir deste repositório quando o levantamento estiver completo, pra revisão da dupla)
+- [~] Relatório escrito — esqueleto `.docx` gerado ([Trabalho1/relatorio/](./Trabalho1/relatorio/)); Introdução, Referências e Anexo (código completo) prontos; seções 2–8 e Conclusão em preenchimento incremental
 - [ ] Vídeo gravado e publicado (prazo 22/09)
 
 ### Subconjunto de código selecionado

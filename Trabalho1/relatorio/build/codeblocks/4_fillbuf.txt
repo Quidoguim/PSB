@@ -1,0 +1,116 @@
+ 2018  static bool
+ 2019  fillbuf (struct buffer *buf, FILE *fp, char const *file,
+ 2020           struct sort_buffer_policy *policy)
+ 2021  {
+ 2022    struct keyfield const *key = keylist;
+ 2023    char eol = eolchar;
+ 2024    size_t line_bytes = buf->line_bytes;
+ 2025    size_t mergesize = merge_buffer_size - MIN_MERGE_BUFFER_SIZE;
+ 2026  
+ 2027    if (buf->eof)
+ 2028      return false;
+ 2029  
+ 2030    if (buf->used != buf->left)
+ 2031      {
+ 2032        memmove (buf->buf, buf->buf + buf->used - buf->left, buf->left);
+ 2033        buf->used = buf->left;
+ 2034        buf->nlines = 0;
+ 2035      }
+ 2036  
+ 2037    while (true)
+ 2038      {
+ 2039        char *ptr = buf->buf + buf->used;
+ 2040        struct line *linelim = buffer_linelim (buf);
+ 2041        struct line *line = linelim - buf->nlines;
+ 2042        size_t avail = (char *) linelim - buf->nlines * line_bytes - ptr;
+ 2043        char *line_start = buf->nlines ? line->text + line->length : buf->buf;
+ 2044  
+ 2045        while (line_bytes + 1 < avail)
+ 2046          {
+ 2047            /* Read as many bytes as possible, but do not read so many
+ 2048               bytes that there might not be enough room for the
+ 2049               corresponding line array.  The worst case is when the
+ 2050               rest of the input file consists entirely of newlines,
+ 2051               except that the last byte is not a newline.  */
+ 2052            size_t readsize = (avail - 1) / (line_bytes + 1);
+ 2053            size_t bytes_read = fread (ptr, 1, readsize, fp);
+ 2054            char *ptrlim = ptr + bytes_read;
+ 2055            char *p;
+ 2056            avail -= bytes_read;
+ 2057  
+ 2058            if (bytes_read != readsize)
+ 2059              {
+ 2060                if (ferror (fp))
+ 2061                  sort_die (_("read failed"), file);
+ 2062                if (feof (fp))
+ 2063                  {
+ 2064                    buf->eof = true;
+ 2065                    if (buf->buf == ptrlim)
+ 2066                      return false;
+ 2067                    if (line_start != ptrlim && ptrlim[-1] != eol)
+ 2068                      *ptrlim++ = eol;
+ 2069                  }
+ 2070              }
+ 2071  
+ 2072            /* Find and record each line in the just-read input.  */
+ 2073            while ((p = memchr (ptr, eol, ptrlim - ptr)))
+ 2074              {
+ 2075                /* Delimit the line with NUL. This eliminates the need to
+ 2076                   temporarily replace the last byte with NUL when calling
+ 2077                   xmemcoll, which increases performance.  */
+ 2078                *p = '\0';
+ 2079                ptr = p + 1;
+ 2080                line--;
+ 2081                line->text = line_start;
+ 2082                line->length = ptr - line_start;
+ 2083                mergesize = MAX (mergesize, line->length);
+ 2084                avail -= line_bytes;
+ 2085  
+ 2086                if (key)
+ 2087                  {
+ 2088                    /* Precompute the position of the first key for
+ 2089                       efficiency.  */
+ 2090                    line->keylim = (key->eword == SIZE_MAX
+ 2091                                    ? p
+ 2092                                    : limfield (line, key));
+ 2093  
+ 2094                    if (key->sword != SIZE_MAX)
+ 2095                      line->keybeg = begfield (line, key);
+ 2096                    else
+ 2097                      {
+ 2098                        if (key->skipsblanks)
+ 2099                          while (blanks[to_uchar (*line_start)])
+ 2100                            line_start++;
+ 2101                        line->keybeg = line_start;
+ 2102                      }
+ 2103                  }
+ 2104  
+ 2105                line_start = ptr;
+ 2106              }
+ 2107  
+ 2108            ptr = ptrlim;
+ 2109            if (buf->eof)
+ 2110              break;
+ 2111          }
+ 2112  
+ 2113        buf->used = ptr - buf->buf;
+ 2114        buf->nlines = buffer_linelim (buf) - line;
+ 2115        if (buf->nlines != 0)
+ 2116          {
+ 2117            if (! buf->eof && maybe_growbuf (buf, policy))
+ 2118              continue;
+ 2119            buf->left = ptr - line_start;
+ 2120            merge_buffer_size = mergesize + MIN_MERGE_BUFFER_SIZE;
+ 2121            return true;
+ 2122          }
+ 2123  
+ 2124        {
+ 2125          /* The current input line is too long to fit in the buffer.
+ 2126             Increase the buffer size and try again, keeping it properly
+ 2127             aligned.  */
+ 2128          idx_t line_alloc = buf->alloc / sizeof (struct line);
+ 2129          buf->buf = xpalloc (buf->buf, &line_alloc, 1, -1, sizeof (struct line));
+ 2130          buf->alloc = line_alloc * sizeof (struct line);
+ 2131        }
+ 2132      }
+ 2133  }

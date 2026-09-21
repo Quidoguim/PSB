@@ -1,0 +1,103 @@
+ 1908  ATTRIBUTE_PURE
+ 1909  static char *
+ 1910  limfield (struct line const *line, struct keyfield const *key)
+ 1911  {
+ 1912    char *ptr = line->text, *lim = ptr + line->length - 1;
+ 1913    size_t eword = key->eword, echar = key->echar;
+ 1914  
+ 1915    if (echar == 0)
+ 1916      eword++; /* Skip all of end field.  */
+ 1917  
+ 1918    /* Move PTR past EWORD fields or to one past the last byte on LINE,
+ 1919       whichever comes first.  If there are more than EWORD fields, leave
+ 1920       PTR pointing at the beginning of the field having zero-based index,
+ 1921       EWORD.  If a delimiter character was specified (via -t), then that
+ 1922       'beginning' is the first character following the delimiting TAB.
+ 1923       Otherwise, leave PTR pointing at the first 'blank' character after
+ 1924       the preceding field.  */
+ 1925    if (tab != TAB_DEFAULT)
+ 1926      while (ptr < lim && eword--)
+ 1927        {
+ 1928          char *sep = memchr (ptr, tab, lim - ptr);
+ 1929          ptr = sep ? sep : lim;
+ 1930          if (ptr < lim && (eword || echar))
+ 1931            ++ptr;
+ 1932        }
+ 1933    else
+ 1934      while (ptr < lim && eword--)
+ 1935        {
+ 1936          while (ptr < lim && blanks[to_uchar (*ptr)])
+ 1937            ++ptr;
+ 1938          while (ptr < lim && !blanks[to_uchar (*ptr)])
+ 1939            ++ptr;
+ 1940        }
+ 1941  
+ 1942  #ifdef POSIX_UNSPECIFIED
+ 1943    /* The following block of code makes GNU sort incompatible with
+ 1944       standard Unix sort, so it's ifdef'd out for now.
+ 1945       The POSIX spec isn't clear on how to interpret this.
+ 1946       FIXME: request clarification.
+ 1947  
+ 1948       From: kwzh@gnu.ai.mit.edu (Karl Heuer)
+ 1949       Date: Thu, 30 May 96 12:20:41 -0400
+ 1950       [Translated to POSIX 1003.1-2001 terminology by Paul Eggert.]
+ 1951  
+ 1952       [...]I believe I've found another bug in 'sort'.
+ 1953  
+ 1954       $ cat /tmp/sort.in
+ 1955       a b c 2 d
+ 1956       pq rs 1 t
+ 1957       $ textutils-1.15/src/sort -k1.7,1.7 </tmp/sort.in
+ 1958       a b c 2 d
+ 1959       pq rs 1 t
+ 1960       $ /bin/sort -k1.7,1.7 </tmp/sort.in
+ 1961       pq rs 1 t
+ 1962       a b c 2 d
+ 1963  
+ 1964       Unix sort produced the answer I expected: sort on the single character
+ 1965       in column 7.  GNU sort produced different results, because it disagrees
+ 1966       on the interpretation of the key-end spec "M.N".  Unix sort reads this
+ 1967       as "skip M-1 fields, then N-1 characters"; but GNU sort wants it to mean
+ 1968       "skip M-1 fields, then either N-1 characters or the rest of the current
+ 1969       field, whichever comes first".  This extra clause applies only to
+ 1970       key-ends, not key-starts.
+ 1971       */
+ 1972  
+ 1973    /* Make LIM point to the end of (one byte past) the current field.  */
+ 1974    if (tab != TAB_DEFAULT)
+ 1975      {
+ 1976        char *newlim;
+ 1977        newlim = memchr (ptr, tab, lim - ptr);
+ 1978        if (newlim)
+ 1979          lim = newlim;
+ 1980      }
+ 1981    else
+ 1982      {
+ 1983        char *newlim;
+ 1984        newlim = ptr;
+ 1985        while (newlim < lim && blanks[to_uchar (*newlim)])
+ 1986          ++newlim;
+ 1987        while (newlim < lim && !blanks[to_uchar (*newlim)])
+ 1988          ++newlim;
+ 1989        lim = newlim;
+ 1990      }
+ 1991  #endif
+ 1992  
+ 1993    if (echar != 0) /* We need to skip over a portion of the end field.  */
+ 1994      {
+ 1995        /* If we're ignoring leading blanks when computing the End
+ 1996           of the field, skip past them here.  */
+ 1997        if (key->skipeblanks)
+ 1998          while (ptr < lim && blanks[to_uchar (*ptr)])
+ 1999            ++ptr;
+ 2000  
+ 2001        /* Advance PTR by ECHAR (if possible), but no further than LIM.  */
+ 2002        size_t remaining_bytes = lim - ptr;
+ 2003        if (echar < remaining_bytes)
+ 2004          ptr += echar;
+ 2005        else
+ 2006          ptr = lim;
+ 2007      }
+ 2008  
+ 2009    return ptr;
+ 2010  }

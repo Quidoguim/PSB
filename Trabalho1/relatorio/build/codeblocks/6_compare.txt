@@ -1,0 +1,41 @@
+ 3141  static int
+ 3142  compare (struct line const *a, struct line const *b)
+ 3143  {
+ 3144    int diff;
+ 3145    size_t alen, blen;
+ 3146  
+ 3147    /* First try to compare on the specified keys (if any).
+ 3148       The only two cases with no key at all are unadorned sort,
+ 3149       and unadorned sort -r. */
+ 3150    if (keylist)
+ 3151      {
+ 3152        diff = keycompare (a, b);
+ 3153        if (diff || unique || stable)
+ 3154          return diff;
+ 3155      }
+ 3156  
+ 3157    /* If the keys all compare equal (or no keys were specified)
+ 3158       fall through to the default comparison.  */
+ 3159    alen = a->length - 1, blen = b->length - 1;
+ 3160  
+ 3161    if (alen == 0)
+ 3162      diff = - NONZERO (blen);
+ 3163    else if (blen == 0)
+ 3164      diff = 1;
+ 3165    else if (hard_LC_COLLATE)
+ 3166      {
+ 3167        /* xmemcoll0 is a performance enhancement as
+ 3168           it will not unconditionally write '\0' after the
+ 3169           passed in buffers, which was seen to give around
+ 3170           a 3% increase in performance for short lines.  */
+ 3171        diff = xmemcoll0 (a->text, alen + 1, b->text, blen + 1);
+ 3172      }
+ 3173    else
+ 3174      {
+ 3175        diff = memcmp (a->text, b->text, MIN (alen, blen));
+ 3176        if (!diff)
+ 3177          diff = _GL_CMP (alen, blen);
+ 3178      }
+ 3179  
+ 3180    return diff_reversed (diff, reverse);
+ 3181  }

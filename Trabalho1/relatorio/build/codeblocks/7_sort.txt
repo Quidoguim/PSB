@@ -1,0 +1,128 @@
+ 4314  static void
+ 4315  sort (char *const *files, size_t nfiles, char const *output_file,
+ 4316        size_t nthreads)
+ 4317  {
+ 4318    struct buffer buf;
+ 4319    struct sort_buffer_policy policy;
+ 4320    size_t ntemps = 0;
+ 4321    bool output_file_created = false;
+ 4322  
+ 4323    buf.alloc = 0;
+ 4324    policy.initial = policy.limit = 0;
+ 4325    policy.growth_failed = false;
+ 4326  
+ 4327    while (nfiles)
+ 4328      {
+ 4329        char const *temp_output;
+ 4330        char const *file = *files;
+ 4331        FILE *fp = xfopen (file, "r");
+ 4332        FILE *tfp;
+ 4333  
+ 4334        size_t bytes_per_line;
+ 4335        if (nthreads > 1)
+ 4336          {
+ 4337            /* Get log P. */
+ 4338            size_t tmp = 1;
+ 4339            size_t mult = 1;
+ 4340            while (tmp < nthreads)
+ 4341              {
+ 4342                tmp *= 2;
+ 4343                mult++;
+ 4344              }
+ 4345            bytes_per_line = (mult * sizeof (struct line));
+ 4346          }
+ 4347        else
+ 4348          bytes_per_line = sizeof (struct line) * 3 / 2;
+ 4349  
+ 4350        if (! buf.alloc)
+ 4351          {
+ 4352            sort_buffer_policy (&fp, 1, files, nfiles, bytes_per_line,
+ 4353                                &policy);
+ 4354            initbuf (&buf, bytes_per_line, policy.initial);
+ 4355          }
+ 4356        buf.eof = false;
+ 4357        files++;
+ 4358        nfiles--;
+ 4359  
+ 4360        while (fillbuf (&buf, fp, file, &policy))
+ 4361          {
+ 4362            struct line *line;
+ 4363  
+ 4364            if (buf.eof && nfiles
+ 4365                && (bytes_per_line + 1
+ 4366                    < (buf.alloc - buf.used - bytes_per_line * buf.nlines)))
+ 4367              {
+ 4368                /* End of file, but there is more input and buffer room.
+ 4369                   Concatenate the next input file; this is faster in
+ 4370                   the usual case.  */
+ 4371                buf.left = buf.used;
+ 4372                break;
+ 4373              }
+ 4374  
+ 4375            saved_line.text = NULL;
+ 4376            line = buffer_linelim (&buf);
+ 4377            if (buf.eof && !nfiles && !ntemps && !buf.left)
+ 4378              {
+ 4379                xfclose (fp, file);
+ 4380                tfp = xfopen (output_file, "w");
+ 4381                temp_output = output_file;
+ 4382                output_file_created = true;
+ 4383              }
+ 4384            else
+ 4385              {
+ 4386                ++ntemps;
+ 4387                temp_output = create_temp (&tfp)->name;
+ 4388              }
+ 4389            if (1 < buf.nlines)
+ 4390              {
+ 4391                if (nthreads > 1)
+ 4392                  {
+ 4393                    struct merge_node_queue queue;
+ 4394                    queue_init (&queue, nthreads);
+ 4395                    struct merge_node *merge_tree =
+ 4396                      merge_tree_init (nthreads, buf.nlines, line);
+ 4397  
+ 4398                    sortlines (line, nthreads, buf.nlines, merge_tree + 1,
+ 4399                               &queue, tfp, temp_output);
+ 4400  
+ 4401                    merge_tree_destroy (nthreads, merge_tree);
+ 4402                    queue_destroy (&queue);
+ 4403                  }
+ 4404                else
+ 4405                  {
+ 4406                    sequential_sort (line, buf.nlines,
+ 4407                                     line - buf.nlines, false);
+ 4408                    for (size_t i = 0; i < buf.nlines; i++)
+ 4409                      write_unique (line - i - 1, tfp, temp_output);
+ 4410                  }
+ 4411              }
+ 4412            else
+ 4413              write_unique (line - 1, tfp, temp_output);
+ 4414  
+ 4415            xfclose (tfp, temp_output);
+ 4416  
+ 4417            if (output_file_created)
+ 4418              goto finish;
+ 4419          }
+ 4420        xfclose (fp, file);
+ 4421      }
+ 4422  
+ 4423   finish:
+ 4424    free (buf.buf);
+ 4425  
+ 4426    if (! output_file_created)
+ 4427      {
+ 4428        struct tempnode *node = temphead;
+ 4429        struct sortfile *tempfiles = xnmalloc (ntemps, sizeof *tempfiles);
+ 4430        for (size_t i = 0; node; i++)
+ 4431          {
+ 4432            tempfiles[i].name = node->name;
+ 4433            tempfiles[i].temp = node;
+ 4434            node = node->next;
+ 4435          }
+ 4436        merge (tempfiles, ntemps, ntemps, output_file);
+ 4437        free (tempfiles);
+ 4438      }
+ 4439  
+ 4440    reap_all ();
+ 4441  }

@@ -22,17 +22,19 @@ Study, understand, and present a GNU utility and/or C standard library (GLIBC) f
 
 [Trabalho1/sort.c](Trabalho1/sort.c) — 5154 linhas, baixado do GNU Coreutils na branch `master`, referência commit [`bff0e54`](https://github.com/coreutils/coreutils/commit/bff0e54) ("build: sort: explicitly tag libcrypto dependency", 06/09/2026).
 
-Subconjunto escolhido para o relatório/apresentação (~740 linhas, fio narrativo único: buffer → extração de chave → comparação → dispatch; deixa de fora `main()`, 558 linhas, e a maquinaria de threads/merge, complexas demais pra um vídeo de 10 min):
+Subconjunto escolhido para o relatório/apresentação (~677 linhas, fio narrativo único: buffer → extração de chave → comparação → dispatch; deixa de fora `main()`, 558 linhas, e a maquinaria de threads/merge, complexas demais pra um vídeo de 10 min):
 
 | Função | Linhas | Motivo |
 |---|---|---|
-| `try_growbuf`/`maybe_growbuf` | 1802-1861 | truque: buffer dobra de tamanho (realloc amortizado) |
-| `begfield` | 1862-1908 | aritmética de ponteiros — início do campo |
-| `limfield` | 1909-2018 | aritmética de ponteiros — fim do campo, contador regressivo |
-| `fillbuf` | 2019-2169 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
-| `keycompare` | 2946-3140 | núcleo: comparação multi-chave, bloco denso |
-| `compare` | 3141-3187 | desempate por linha inteira |
-| `sort()` | 4315-4444 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` (`sort.c:4418`, label `finish`) |
+| `try_growbuf`/`maybe_growbuf` | 1802-1857 | truque: buffer dobra de tamanho (realloc amortizado) |
+| `begfield` | 1862-1903 | aritmética de ponteiros — início do campo |
+| `limfield` | 1908-2010 | aritmética de ponteiros — fim do campo, contador regressivo (inclui `ATTRIBUTE_PURE` em `1908`) |
+| `fillbuf` | 2018-2133 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
+| `keycompare` | 2946-3136 | núcleo: comparação multi-chave, bloco denso |
+| `compare` | 3141-3181 | desempate por linha inteira |
+| `sort()` | 4314-4441 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` (`sort.c:4418`, label `finish`) |
+
+> Correção (22/09): os limites de `begfield`, `limfield`, `fillbuf`, `compare` e `sort()` estavam contando até a linha anterior à *próxima* função, o que incluía comentário/atributo de documentação de outra função — não código da função em si. Corrigido pra fechar exatamente na chave de fechamento real de cada uma (total caiu de ~740 pra ~677 linhas; nenhuma citação `sort.c:linha` específica usada em Aritmética de ponteiros/Truques ficou fora do intervalo corrigido).
 
 O arquivo inteiro só tem 2 `goto`: `sort.c:3272` (dentro de `check()`, fora do subconjunto) e `sort.c:4418` (dentro de `sort()`, no subconjunto — cobre o critério "desvio incondicional" sem precisar entrar em `main()`).
 
@@ -107,7 +109,7 @@ Instituição/projeto em comum: ambos ligados ao **GNU Project / Free Software F
 
 ### Convenções de codificação
 
-Fonte normativa: [GNU Coding Standards, seção Formatting](https://www.gnu.org/prep/standards/html_node/Formatting.html) (citações diretas). Evidência levantada no subconjunto escolhido (linhas 1802-4444):
+Fonte normativa: [GNU Coding Standards, seção Formatting](https://www.gnu.org/prep/standards/html_node/Formatting.html) (citações diretas). Evidência levantada no subconjunto escolhido (linhas 1802-4441):
 
 | Regra do padrão (citação direta) | Onde aparece no subconjunto |
 |---|---|

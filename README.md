@@ -54,17 +54,17 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 
 ### Subconjunto de código selecionado
 
-~740 linhas de `sort.c`, cobrindo um fluxo único (buffer → extração de chave → comparação → dispatch). Fora do escopo: `main()` (558 linhas) e a maquinaria de threads/merge.
+~677 linhas de `sort.c`, cobrindo um fluxo único (buffer → extração de chave → comparação → dispatch). Fora do escopo: `main()` (558 linhas) e a maquinaria de threads/merge.
 
 | Função | Linhas | Motivo |
 |---|---|---|
-| `try_growbuf`/`maybe_growbuf` | 1802-1861 | truque: buffer dobra de tamanho (realloc amortizado) |
-| `begfield` | 1862-1908 | aritmética de ponteiros — início do campo |
-| `limfield` | 1909-2018 | aritmética de ponteiros — fim do campo, contador regressivo |
-| `fillbuf` | 2019-2169 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
-| `keycompare` | 2946-3140 | núcleo: comparação multi-chave |
-| `compare` | 3141-3187 | desempate por linha inteira |
-| `sort()` | 4315-4444 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` |
+| `try_growbuf`/`maybe_growbuf` | 1802-1857 | truque: buffer dobra de tamanho (realloc amortizado) |
+| `begfield` | 1862-1903 | aritmética de ponteiros — início do campo |
+| `limfield` | 1908-2010 | aritmética de ponteiros — fim do campo, contador regressivo |
+| `fillbuf` | 2018-2133 | leitura de entrada/EOF, monta tabela de linhas via ponteiros |
+| `keycompare` | 2946-3136 | núcleo: comparação multi-chave |
+| `compare` | 3141-3181 | desempate por linha inteira |
+| `sort()` | 4314-4441 | dispatcher memória vs. arquivo temporário; contém o único `goto` do arquivo fora de `check()` |
 
 Detalhes e raciocínio completo: [CLAUDE.md](./CLAUDE.md#código-fonte).
 

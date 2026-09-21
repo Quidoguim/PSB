@@ -49,7 +49,7 @@ Conhecer e apresentar idiomas e práticas da programação em **linguagem C** no
 - [x] Referência acadêmica levantada
 - [x] Exemplo de uso com execução real (stack/heap)
 - [x] Makefile / testes automatizados (12/12 passando)
-- [x] Relatório escrito — `.docx` completo ([Trabalho1/relatorio/](./Trabalho1/relatorio/)), todas as 8 seções + Conclusão preenchidas, com tabelas e as duas figuras (diagramas) inseridas; falta revisão final do usuário
+- [x] Relatório escrito e revisado — [Trabalho1/relatorio/Relatorio-T1-sort.c.docx](./Trabalho1/relatorio/Relatorio-T1-sort.c.docx), completo (8 seções + Conclusão, tabelas, figuras, Sumário com paginação real); conferido contra o modelo da professora e vasculhado por texto oculto/pegadinha — nada encontrado
 - [ ] Vídeo gravado e publicado (prazo 22/09)
 
 ### Subconjunto de código selecionado

@@ -252,7 +252,7 @@ O modelo de relatório (análise de `echo.c`, 8 páginas) mostra o formato esper
 10. ~~Buscar ao menos uma referência acadêmica~~ — feito, ver [Referência acadêmica](#referência-acadêmica) acima.
 11. ~~Preparar um exemplo de uso~~ — feito, ver [Exemplo de uso](#exemplo-de-uso-execução-stackheap) acima.
 12. ~~Criar Makefile e testes automatizados~~ — feito, ver [Construção e testes automatizados](#construção-e-testes-automatizados) acima.
-13. ~~Escrever o relatório seguindo a estrutura do modelo~~ — feito. Todas as 8 seções + Conclusão escritas em prosa STE-lite, tabelas 2-4 e as duas figuras (PNG, alta resolução) encaixadas no `.docx`. Ver [Trabalho1/relatorio/Relatorio-T1-sort.c-esqueleto.docx](Trabalho1/relatorio/Relatorio-T1-sort.c-esqueleto.docx) — falta só revisão do usuário e a Conclusão pode ser ajustada depois da gravação do vídeo, se necessário.
+13. ~~Escrever o relatório seguindo a estrutura do modelo~~ — feito. Todas as 8 seções + Conclusão escritas em prosa STE-lite, tabelas 2-4 e as duas figuras (PNG, alta resolução) encaixadas no `.docx`, Sumário com paginação real. Revisão final feita: conferido contra o modelo, PDFs da disciplina e o próprio relatório vasculhados por texto oculto/marca d'água/pegadinha de LLM (nada encontrado), metadata do docx corrigida (autor "Un-named" → nomes da dupla). Arquivo final: [Trabalho1/relatorio/Relatorio-T1-sort.c.docx](Trabalho1/relatorio/Relatorio-T1-sort.c.docx).
 14. Preparar os slides/roteiro e gravar o vídeo (até 10 min), com cada integrante se identificando antes de falar.
 15. Publicar o vídeo em plataforma de compartilhamento de mídia e entregar o link até 22/09.
 

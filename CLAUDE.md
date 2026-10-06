@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a coursework repository for **Programação de Software Básico** (PUCRS/Escola Politécnica). It is not a software project with build/lint/test tooling — there is no source code to compile yet. The repo currently holds the assignment brief and the group's topic selection for Trabalho 1.
 
+There is also [ListaEncadeada/](ListaEncadeada/), an unrelated individual exercise list (vetores com aritmética de ponteiros + lista encadeada com menu), solved in a single beginner-style file, [ListaEncadeada/exercicios.c](ListaEncadeada/exercicios.c): no comments, no extra robustness, only `stdio.h`/`stdlib.h`, no `[]` indexing inside the vector functions. `addStart` inserts at the *start* (the PDF text says "final" — typo, confirmed with the user). The professor's "código-base" was never available on Moodle, so the list code is written from scratch. The PDFs in that folder (enunciados + slides, PUCRS-copyrighted) stay local only and are gitignored because the repo is public. Local `gcc` is blocked here (see Exemplo de uso), so it was compiled/tested via Wandbox.
+
 ## Trabalho 1
 
 Study, understand, and present a GNU utility and/or C standard library (GLIBC) function, focused on idioms and practices of professional C programming in systems software.

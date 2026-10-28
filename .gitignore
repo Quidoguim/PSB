@@ -60,3 +60,7 @@ Thumbs.db
 
 # Material da PUCRS (repositorio publico)
 ListaEncadeada/*.pdf
+Trabalho2/*.pdf
+
+# Saida local do graphify (gerada, contem caminhos absolutos da maquina)
+graphify-out/

@@ -25,7 +25,3 @@ Biblioteca em C que aloca um único bloco de memória (o *pool*) e, a partir del
 - **Estratégias de alocação:** First Fit, Best Fit ou Worst Fit; teste com ~50 blocos de tamanhos variados.
 - **Avaliação:** compilar sem erros nem avisos, funcionar conforme especificado, pouca fragmentação, sem vazamento de memória, e apresentação em sala (~10 min) explicando o código em detalhe. Grupos de até 3; entrega do código-fonte em `.tar.gz`/`.zip` pelo Moodle.
 - **Código-base da professora:** [Trabalho2/codigo-base/](./Trabalho2/codigo-base/) (`main.c`, `mymemory.h`).
-
-## Exercícios — vetores e lista encadeada
-
-[ListaEncadeada/exercicios.c](./ListaEncadeada/exercicios.c): funções de vetor com aritmética de ponteiros e lista encadeada com menu interativo.

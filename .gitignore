@@ -58,9 +58,6 @@ dkms.conf
 .DS_Store
 Thumbs.db
 
-# Material da PUCRS (repositorio publico)
-Trabalho2/*.pdf
-
 # Saida local do graphify (gerada, contem caminhos absolutos da maquina)
 graphify-out/
 

@@ -16,7 +16,7 @@ This is a coursework repository for **Programação de Software Básico** (PUCRS
 
 **Enunciado recebido em 27/10** — nenhum desenvolvimento iniciado ainda. Material em [Trabalho2/](Trabalho2/):
 
-- `Trabalho2/T2-PSB.pdf` — enunciado (4 páginas). **Gitignored** (material PUCRS, repo público); fica só local. Texto extraído com `pdftotext` e conferido: nada oculto.
+- [Trabalho2/T2-PSB.pdf](Trabalho2/T2-PSB.pdf) — enunciado (4 páginas). Versionado a pedido do usuário (28/10), para o colega de grupo ter acesso pelo repositório. Texto extraído com `pdftotext` e conferido: nada oculto.
 - [Trabalho2/codigo-base/](Trabalho2/codigo-base/) — `main.c` e `mymemory.h` fornecidos pela professora (vieram do Moodle como `.txt`; só renomeados, conteúdo intacto).
 
 **O que é pedido:** uma biblioteca de gerenciamento de memória em C. Um `malloc` só aloca um bloco grande (o *pool*); dali em diante a biblioteca entrega e recebe de volta pedaços desse bloco, e controla quais pedaços estão ocupados com uma lista encadeada de `allocation_t` (`start`, `size`, `next`), cuja cabeça fica em `mymemory_t` (`pool`, `total_size`, `head`). Funções: `mymemory_init`, `mymemory_alloc` (retorna `NULL` se não couber), `mymemory_free` (ponteiro inválido → não faz nada), `mymemory_display`, `mymemory_stats` (nº de alocações, bytes alocados, bytes livres, maior bloco livre contíguo, nº de fragmentos livres) e `mymemory_cleanup`.

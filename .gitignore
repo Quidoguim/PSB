@@ -64,8 +64,5 @@ Trabalho2/*.pdf
 # Saida local do graphify (gerada, contem caminhos absolutos da maquina)
 graphify-out/
 
-# Paginas do Moodle salvas (material da PUCRS, logado com dados do aluno)
-ExercícioDePonteiros/enunciado-moodle/
-
 # Executavel compilado do exercicio
-ExercícioDePonteiros/lista/lista
+ListaEncadeada/lista

@@ -32,9 +32,18 @@ This is a coursework repository for **Programação de Software Básico** (PUCRS
 - Código **simples e autêntico**, não "elegante": entregar o que o enunciado pede, dentro das regras, e o grupo conseguir explicar cada linha na apresentação. Preferir a solução mais direta (ex.: uma estratégia só, laços simples, nomes claros) a otimizações ou truques.
 - **Nada copiado da internet.** Se uma ideia vier de fora, reescrever do nosso jeito e referenciar em comentário no código (regra do enunciado).
 - O usuário quer entender o problema, o desenvolvimento e a solução nos mínimos detalhes — explicar cada decisão ao implementar, não só entregar código.
-- `graphify-out/` fica só local; o T2 será feito somente nesta máquina (macOS, `cc` funciona).
+- `graphify-out/` fica só local; o T2 será feito somente no MacBook (macOS, `cc` funciona).
+- **Ambiente (conferido em 30/10):** o repositório também é clonado num Windows (máquina do trabalho), onde o `gcc` do MSYS2 continua bloqueado em silêncio: `gcc -c` sai com status 1, sem mensagem e sem gerar `.o`, mesmo sintoma do T1. Lá dá pra ler e planejar, mas compilar, testar e checar leaks fica no Mac.
 
 O T2 será escrito do zero, sem partir do exercício de lista encadeada.
+
+**Plano proposto (30/10, aguardando confirmação do usuário):**
+1. Entender o modelo: desenhar pool + lista de `allocation_t` num exemplo pequeno (pool de 1000 bytes, 3 alocações, 1 free).
+2. Estratégia: sugestão **First Fit** com a lista mantida **ordenada por endereço** — os buracos livres ficam entre um nó e o próximo, então alloc/free/stats viram laços simples. Ainda não confirmada pelo usuário.
+3. Estrutura: `mymemory.c` + um `main.c` de testes; decidir se corrige os nomes no `main.c` da professora ou entrega o nosso.
+4. Implementar uma função por vez, explicando: init, cleanup, alloc, free, display, stats.
+5. Bateria de ~50 blocos em ordens diferentes; `cc -Wall -Wextra` sem avisos; checagem de leak (`leaks --atExit`).
+6. Registrar o uso de IA pra entrega e montar o roteiro da apresentação.
 
 ## Trabalho 1
 

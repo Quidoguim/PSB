@@ -17,7 +17,7 @@ Notas detalhadas de cada etapa (autores, convenções, ponteiros, truques, bloco
 
 ## Trabalho 2 — gerenciador de memória (memory pool)
 
-**Status: enunciado recebido (27/10), desenvolvimento não iniciado.**
+**Status: enunciado recebido (27/10), desenvolvimento não iniciado.** Plano proposto em 30/10 (First Fit com lista ordenada por endereço, uma função por vez, bateria de ~50 blocos), aguardando confirmação. Compilação e testes só no macOS: no Windows o `gcc` local é bloqueado.
 
 Biblioteca em C que aloca um único bloco de memória (o *pool*) e, a partir dele, atende pedidos de alocação e liberação, controlando as regiões ocupadas com uma lista encadeada. `malloc`/`free` só podem ser usados para o pool e para as estruturas de controle (`mymemory_t` e os nós `allocation_t`).
 

@@ -18,7 +18,7 @@ This is a coursework repository for **Programação de Software Básico** (PUCRS
 
 ## Trabalho 2
 
-**Implementado em 02/11; entrega e apresentação em 03/11** (prazo informado pelo usuário). Por falta de tempo, o ritmo "um módulo por vez" foi trocado por: implementar tudo de uma vez seguindo as decisões D1–D6 do plano e entregar uma cola curta ([Trabalho2/COLA-APRESENTACAO.md](Trabalho2/COLA-APRESENTACAO.md): por que/como/aula de cada escolha + perguntas prováveis — a professora faz até 4 perguntas a um integrante).
+**Implementado em 02/11; entrega e apresentação em 03/11** (prazo informado pelo usuário). Por falta de tempo, o ritmo "um módulo por vez" foi trocado por: implementar tudo de uma vez seguindo as decisões D1–D6 do plano e entregar uma cola curta ([Trabalho2/COLA-APRESENTACAO.md](Trabalho2/COLA-APRESENTACAO.md): por que/como/aula de cada escolha + perguntas prováveis — a professora faz até 4 perguntas a um integrante). A saída do `make run` está explicada linha a linha, com as contas de cada número, em [Trabalho2/SAIDA-EXPLICADA.md](Trabalho2/SAIDA-EXPLICADA.md) — se mudar `main.c`/`mymemory.c`, refazer as contas lá.
 
 - Código: [mymemory.c](Trabalho2/mymemory.c) (First Fit, lista ordenada por endereço, contas em `char *`, alinhamento a 8), [main.c](Trabalho2/main.c) (cenário da professora + casos especiais + 50 blocos em 3 ordens, 22 verificações), [Makefile](Trabalho2/Makefile) (`make`, `run`, `leaks`, `entrega`, `clean`), `mymemory.h` idêntico ao da professora.
 - Verificado no Mac: zero avisos com `-Wall -Wextra` (e com `-pedantic -std=c99`), 22/22 verificações, `leaks --atExit` = 0 leaks; o `.tar.gz` de `make entrega` foi extraído numa pasta limpa e compilou/rodou.

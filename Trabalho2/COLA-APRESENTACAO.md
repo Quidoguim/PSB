@@ -92,6 +92,8 @@ head -> {start, 16} -> {start, 64} -> NULL      (lista em ordem de endereço)
 
 ## Resultados para mostrar (`make run`)
 
+> Explicação de cada linha da saída, com as contas: [SAIDA-EXPLICADA.md](SAIDA-EXPLICADA.md).
+
 **Exemplo da professora** (pool de 1000): `v` (128) no byte 0, `v2` (64) no byte 128. Depois de `free(v)`, `str` (16) vai para o **byte 0**, porque o First Fit reaproveita o primeiro buraco. Ficam 2 fragmentos livres: 112 bytes (entre `str` e `v2`) e 808 bytes (no fim).
 
 **50 blocos, pool de 10000 bytes:**

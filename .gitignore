@@ -63,3 +63,10 @@ graphify-out/
 
 # Executavel compilado do exercicio
 ListaEncadeada/lista
+
+# Slides do Moodle salvos localmente (material PUCRS, repositorio publico)
+Estudo/slides-moodle/
+
+# Gerados pelo Makefile do T2
+Trabalho2/t2
+Trabalho2/T2-mymemory.tar.gz

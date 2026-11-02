@@ -17,7 +17,7 @@ Notas detalhadas de cada etapa (autores, convenções, ponteiros, truques, bloco
 
 ## Trabalho 2 — gerenciador de memória (memory pool)
 
-**Status: enunciado recebido (27/10), desenvolvimento não iniciado.** Plano proposto em 30/10 (First Fit com lista ordenada por endereço, uma função por vez, bateria de ~50 blocos), aguardando confirmação. Compilação e testes só no macOS: no Windows o `gcc` local é bloqueado.
+**Status: implementado (02/11); entrega e apresentação em 03/11.** First Fit com lista ordenada por endereço. `make run` executa 22 verificações (exemplo da professora, casos especiais, 50 blocos em 3 ordens); zero avisos e zero vazamentos. Cola da apresentação: [COLA-APRESENTACAO.md](./Trabalho2/COLA-APRESENTACAO.md). Compilação e testes só no macOS: no Windows o `gcc` local é bloqueado.
 
 Biblioteca em C que aloca um único bloco de memória (o *pool*) e, a partir dele, atende pedidos de alocação e liberação, controlando as regiões ocupadas com uma lista encadeada. `malloc`/`free` só podem ser usados para o pool e para as estruturas de controle (`mymemory_t` e os nós `allocation_t`).
 
@@ -26,7 +26,12 @@ Biblioteca em C que aloca um único bloco de memória (o *pool*) e, a partir del
 - **Avaliação:** compilar sem erros nem avisos, funcionar conforme especificado, pouca fragmentação, sem vazamento de memória, e apresentação em sala (~10 min) explicando o código em detalhe. Grupos de até 3; entrega do código-fonte em `.tar.gz`/`.zip` pelo Moodle.
 - **Código-base da professora:** [Trabalho2/codigo-base/](./Trabalho2/codigo-base/) (`main.c`, `mymemory.h`).
 - **Enunciado:** [Trabalho2/T2-PSB.pdf](./Trabalho2/T2-PSB.pdf)
+- **Planejamento (módulos):** [Trabalho2/PLANEJAMENTO.md](./Trabalho2/PLANEJAMENTO.md)
 
 ## Exercício — lista encadeada (alocação dinâmica)
 
 [ListaEncadeada/lista.c](./ListaEncadeada/lista.c): lista simplesmente encadeada com `add`, `addStart`, `removeByValue`, `show`, `freeList` e menu interativo.
+
+## Material de estudo
+
+[Estudo/](./Estudo/): resumos por assunto da disciplina (ponteiros, alocação dinâmica, structs, modularização/Makefile, lista encadeada...), para o T2 e para a prova.

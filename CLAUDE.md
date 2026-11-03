@@ -18,11 +18,11 @@ This is a coursework repository for **Programação de Software Básico** (PUCRS
 
 ## Trabalho 2
 
-**Implementado em 02/11; entrega e apresentação em 03/11** (prazo informado pelo usuário). Por falta de tempo, o ritmo "um módulo por vez" foi trocado por: implementar tudo de uma vez seguindo as decisões D1–D6 do plano e entregar uma cola curta ([Trabalho2/COLA-APRESENTACAO.md](Trabalho2/COLA-APRESENTACAO.md): por que/como/aula de cada escolha + perguntas prováveis — a professora faz até 4 perguntas a um integrante). A saída do `make run` está explicada linha a linha, com as contas de cada número, em [Trabalho2/SAIDA-EXPLICADA.md](Trabalho2/SAIDA-EXPLICADA.md) — se mudar `main.c`/`mymemory.c`, refazer as contas lá.
+**Implementado em 02/11; entrega e apresentação em 03/11** (prazo informado pelo usuário). Por falta de tempo, o ritmo "um módulo por vez" foi trocado por: implementar tudo de uma vez seguindo as decisões D1–D6 do plano e entregar um documento de estudo ([Trabalho2/ESTUDO-APRESENTACAO.md](Trabalho2/ESTUDO-APRESENTACAO.md): as 12 escolhas em texto corrido no estilo do usuário, saída resumida, perguntas "me mostra no código onde" com números de linha e perguntas prováveis; formatação simples, sem enfeite). A professora faz até 4 perguntas a um integrante e não pede para rodar. Se mudar `mymemory.c`/`main.c`, conferir os números de linha no documento.
 
 - Código: [mymemory.c](Trabalho2/mymemory.c) (First Fit, lista ordenada por endereço, contas em `char *`, alinhamento a 8), [main.c](Trabalho2/main.c) (cenário da professora + casos especiais + 50 blocos em 3 ordens, 22 verificações), [Makefile](Trabalho2/Makefile) (`make`, `run`, `leaks`, `entrega`, `clean`), `mymemory.h` idêntico ao da professora.
 - Verificado no Mac: zero avisos com `-Wall -Wextra` (e com `-pedantic -std=c99`), 22/22 verificações, `leaks --atExit` = 0 leaks; o `.tar.gz` de `make entrega` foi extraído numa pasta limpa e compilou/rodou.
-- [USO-DE-IA.md](Trabalho2/USO-DE-IA.md) entra no `.tar.gz` (o enunciado exige explicar o uso de IA). **Falta o usuário preencher os nomes dos integrantes** e regerar o pacote.
+- Sem documento de uso de IA no pacote: o grupo explica o uso oralmente na apresentação (IA para entender o enunciado, planejar, gerar a primeira versão do código, documentos de estudo e testes). O `.tar.gz` leva só `mymemory.h`, `mymemory.c`, `main.c` e `Makefile`; no Windows é gerado com o `tar` do sistema.
 
 Material em [Trabalho2/](Trabalho2/):
 

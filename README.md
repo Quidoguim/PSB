@@ -17,7 +17,7 @@ Notas detalhadas de cada etapa (autores, convenções, ponteiros, truques, bloco
 
 ## Trabalho 2 — gerenciador de memória (memory pool)
 
-**Status: implementado (02/11); entrega e apresentação em 03/11.** First Fit com lista ordenada por endereço. `make run` executa 22 verificações (exemplo da professora, casos especiais, 50 blocos em 3 ordens); zero avisos e zero vazamentos. Cola da apresentação: [COLA-APRESENTACAO.md](./Trabalho2/COLA-APRESENTACAO.md). Saída do programa explicada linha a linha: [SAIDA-EXPLICADA.md](./Trabalho2/SAIDA-EXPLICADA.md). Compilação e testes só no macOS: no Windows o `gcc` local é bloqueado.
+**Status: implementado (02/11); entrega e apresentação em 03/11.** First Fit com lista ordenada por endereço. `make run` executa 22 verificações (exemplo da professora, casos especiais, 50 blocos em 3 ordens); zero avisos e zero vazamentos. Estudo para a apresentação: [ESTUDO-APRESENTACAO.md](./Trabalho2/ESTUDO-APRESENTACAO.md). Compilação e testes só no macOS: no Windows o `gcc` local é bloqueado.
 
 Biblioteca em C que aloca um único bloco de memória (o *pool*) e, a partir dele, atende pedidos de alocação e liberação, controlando as regiões ocupadas com uma lista encadeada. `malloc`/`free` só podem ser usados para o pool e para as estruturas de controle (`mymemory_t` e os nós `allocation_t`).
 

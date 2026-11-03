@@ -24,7 +24,7 @@ leaks: $(PROG)
 
 # Pacote de entrega
 entrega:
-	tar -czf T2-mymemory.tar.gz mymemory.h mymemory.c main.c Makefile USO-DE-IA.md
+	tar -czf T2-mymemory.tar.gz mymemory.h mymemory.c main.c Makefile
 
 clean:
 	rm -f $(OBJETOS) $(PROG)

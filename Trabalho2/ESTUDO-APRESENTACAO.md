@@ -158,12 +158,12 @@ No Mac:
 make          # compila
 make run      # roda os testes
 make leaks    # checa vazamento
-make entrega  # gera T2-mymemory.tar.gz
+make entrega  # gera T2-mymemory.zip
 make clean    # apaga .o e executável
 ```
 
 No Windows, para gerar o pacote de entrega (PowerShell, dentro da pasta Trabalho2):
 
 ```
-tar -czf T2-mymemory.tar.gz mymemory.h mymemory.c main.c Makefile
+Compress-Archive -Path mymemory.h,mymemory.c,main.c,Makefile -DestinationPath T2-mymemory.zip
 ```

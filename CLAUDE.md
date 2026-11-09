@@ -10,7 +10,9 @@ This is a coursework repository for **Programação de Software Básico** (PUCRS
 
 ## Material de estudo
 
-[Estudo/](Estudo/) — resumos por assunto (passagem de parâmetros, structs, ponteiros, alocação dinâmica, modularização/Makefile, lista encadeada), escritos com nossas palavras a partir do Moodle e das apresentações HTML do Prof. Marcelo Cohen (inf.pucrs.br/flash/progswb2). Servem para o T2 e para a prova. Os slides da Prof. Eduarda são PDFs que o Moodle só entrega como download (abrir no navegador embutido dispara um diálogo de salvar); os salvos ficam em `Estudo/slides-moodle/`, gitignored (repo público). Incorporado até agora: aula 10 (alocação dinâmica). Ainda não resumidos: Primeiros Passos, Introdução à Linguagem C, Strings, Arquivos, Manipulação de bits.
+[Estudo/](Estudo/) — resumos por assunto (passagem de parâmetros, structs, ponteiros, alocação dinâmica, modularização/Makefile, lista encadeada), escritos com nossas palavras a partir do Moodle e das apresentações HTML do Prof. Marcelo Cohen (inf.pucrs.br/flash/progswb2). Servem para o T2 e para a prova. Os slides da Prof. Eduarda são PDFs que o Moodle só entrega como download (abrir no navegador embutido dispara um diálogo de salvar); os salvos ficam em `Estudo/slides-moodle/`, gitignored (repo público). Incorporado até agora: aula 10 (alocação dinâmica).
+
+**Prova P1 em 10/11 (terça).** Material em [Estudo/Prova/](Estudo/Prova/README.md), feito em 08/11: 9 resumos curtos (todas as aulas da Prof. Eduarda, lidas no Moodle), 48 V/F com justificativa, 35 "o que imprime?"/"ache o erro" e 15 exercícios das listas — saídas e soluções conferidas com `cc -Wall -Wextra` no Mac. Pedido do usuário: sabe pouco de C e copia tudo no caderno, então conceitos e códigos têm que ser **curtos** e básicos. A prova é sobretudo codificação/análise de código, com V/F justificando as falsas. Os textos dos PDFs foram extraídos dentro da página no navegador embutido; só `aula 01 - introducao.pdf` chegou a ser salvo (em `Estudo/slides-moodle/`, gitignored).
 
 ## Exercício de lista encadeada (Alocação Dinâmica)
 

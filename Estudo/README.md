@@ -13,4 +13,6 @@ São **resumos com nossas palavras e exemplos curtos**, não cópia dos slides. 
 | 05 | [Modularização e Makefile](05-modularizacao-e-makefile.md) | Modularização e Criação de Bibliotecas | `mymemory.h`/`.c`/`main.c`/`Makefile` |
 | 06 | [Lista simplesmente encadeada](06-lista-encadeada.md) | Ponteiros e alocação dinâmica (exercício da lista) | lista de `allocation_t` |
 
-Seções do Moodle ainda **não resumidas** aqui: Primeiros Passos em C, Introdução à Linguagem C, Strings, Arquivos, Manipulação de bits. Os slides da Prof. Eduarda são PDFs que o Moodle só entrega como download. Os que forem salvos ficam em `slides-moodle/`, só local (fora do git, por ser material da PUCRS num repositório público), e são usados para complementar os resumos. Já incorporado: aula 10 (alocação dinâmica).
+**Para a prova (10/11):** ver [Prova/](Prova/README.md) — resumos curtos de todas as aulas (01 a 10), 48 V/F, 35 "o que imprime?" e 15 exercícios, com gabarito testado no compilador.
+
+Seções do Moodle não resumidas nesta pasta (estão em `Prova/`): Primeiros Passos em C, Introdução à Linguagem C, Strings, Arquivos, Manipulação de bits. Os slides da Prof. Eduarda são PDFs que o Moodle só entrega como download. Os que forem salvos ficam em `slides-moodle/`, só local (fora do git, por ser material da PUCRS num repositório público), e são usados para complementar os resumos. Já incorporado: aula 10 (alocação dinâmica).

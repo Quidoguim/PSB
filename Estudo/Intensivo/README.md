@@ -15,7 +15,7 @@ Siga na ordem. Cada lição é curta e termina com um teste rápido. Os gabarito
 | [5](5-ponteiros-e-memoria.md) | Ponteiros, `malloc`/`free` e lista encadeada | 45 min |
 | [6](6-pegadinhas-vf.md) | **As pegadinhas do V ou F** (o mais importante) | 1 h |
 | [7](7-teste-de-mesa.md) | Como descobrir "o que imprime" sem errar | 30 min |
-| [8](8-simulado.md) | Simulado com gabarito | 1 h |
+| [8](8-simulado.md) | Simulado com gabarito (31 questões; a parte 4 tem 15 códigos no estilo das listas da professora) | 1h30 |
 
 ## Plano
 
